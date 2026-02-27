@@ -187,3 +187,52 @@
 .leaflet-bottom.leaflet-left {
   display: none !important;
 }
+
+/* Smart Map Dark Aesthetic */
+.dark-map-tiles {
+  filter: grayscale(100%) invert(100%) brightness(85%) contrast(120%) hue-rotate(180deg) sepia(20%);
+}
+
+.custom-marker-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-marker-icon-container {
+  width: 44px;
+  height: 44px;
+  background-color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 10;
+  position: relative;
+}
+
+.custom-marker-label {
+  margin-top: 4px;
+  background-color: rgba(20, 20, 20, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.custom-marker-label .smile {
+  font-size: 12px;
+}
+
+.leaflet-popup {
+  display: none !important;
+  /* Disabling default popups in favor of our custom React portal/overlay */
+}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -176,7 +176,7 @@ const UserSmartMap = () => {
                 className="text-muted-foreground hover:text-foreground"
                 onClick={() => setSelectedMarker(null)}
               >
-                ×
+                ├ù
               </button>
             </div>
             <div className="space-y-2 text-sm text-muted-foreground">
