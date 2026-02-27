@@ -53,8 +53,17 @@ const SignUp = () => {
     try {
       await signup(name, email, password);
       navigateAfterAuth();
-    } catch {
-      setError("Registration failed. Please try again.");
+    } catch (err: any) {
+      console.error("Signup error:", err);
+      if (err.code === "auth/email-already-in-use") {
+        setError("This email is already registered. Please sign in instead.");
+      } else if (err.code === "auth/invalid-email") {
+        setError("Invalid email address.");
+      } else if (err.code === "auth/weak-password") {
+        setError("Password is too weak. Use at least 6 characters.");
+      } else {
+        setError(err.message || "Registration failed. Please try again.");
+      }
     }
   };
 
