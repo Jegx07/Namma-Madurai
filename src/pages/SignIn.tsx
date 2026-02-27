@@ -28,12 +28,12 @@ const SignIn = () => {
   const handleForgotPassword = async () => {
     setError("");
     setSuccessMessage("");
-    
+
     if (!email) {
       setError("Please enter your email address first.");
       return;
     }
-    
+
     try {
       await resetPassword(email);
       setSuccessMessage("Password reset email sent! Check your inbox.");
@@ -82,83 +82,200 @@ const SignIn = () => {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#f7f8f6] p-4 text-[#1a2e1d] font-sans selection:bg-green-200">
+    <div
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden p-4 font-sans selection:bg-green-700"
+      style={{ background: 'linear-gradient(135deg, #0a0f0d 0%, #0d1a14 25%, #111f18 50%, #0a1610 75%, #080e0b 100%)' }}
+    >
 
-      {/* Background Circuit/Line Elements */}
+      {/* ═══ Animated Radial Glow Orbs ═══ */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute top-[-10%] left-[-5%] h-[500px] w-[500px] rounded-full opacity-20 blur-[120px]"
+          style={{ background: 'radial-gradient(circle, #22c55e 0%, transparent 70%)' }} />
+        <div className="absolute bottom-[-10%] right-[-5%] h-[400px] w-[400px] rounded-full opacity-15 blur-[100px]"
+          style={{ background: 'radial-gradient(circle, #06b6d4 0%, transparent 70%)' }} />
+        <div className="absolute top-[50%] left-[60%] h-[300px] w-[300px] rounded-full opacity-10 blur-[80px]"
+          style={{ background: 'radial-gradient(circle, #22c55e 0%, transparent 70%)' }} />
+      </div>
+
+      {/* ═══ Neon Circuit Lines ═══ */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        {/* Left lines */}
-        <svg className="absolute top-1/3 -left-8 h-64 opacity-20" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M0,100 L50,100 L70,80 L120,80 L140,60 L200,60" stroke="#2c4d32" strokeWidth="2" strokeLinejoin="round" />
-          <path d="M0,120 L40,120 L60,100 L110,100 L130,80 L200,80" stroke="#2c4d32" strokeWidth="1" strokeLinejoin="round" />
-          <circle cx="200" cy="60" r="3" fill="#2c4d32" />
-          <circle cx="200" cy="80" r="2" fill="#2c4d32" />
+
+        <svg className="absolute top-0 left-0 w-full h-full opacity-40" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="glow-green">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+            <filter id="glow-blue">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+          </defs>
+
+          {/* Green diagonal lines */}
+          <path d="M-50,200 L200,200 L230,170 L400,170 L430,200 L600,200 L630,170 L800,170 L830,200 L1000,200 L1030,170 L1250,170"
+            stroke="#22c55e" strokeWidth="1.5" filter="url(#glow-green)" strokeLinejoin="round" />
+          <circle cx="230" cy="170" r="3" fill="#22c55e" filter="url(#glow-green)" />
+          <circle cx="630" cy="170" r="3" fill="#22c55e" filter="url(#glow-green)" />
+          <circle cx="1030" cy="170" r="3" fill="#22c55e" filter="url(#glow-green)" />
+
+          {/* Blue diagonal lines */}
+          <path d="M-50,600 L150,600 L180,570 L350,570 L380,540 L550,540 L580,570 L750,570 L780,600 L950,600 L980,570 L1250,570"
+            stroke="#06b6d4" strokeWidth="1.5" filter="url(#glow-blue)" strokeLinejoin="round" />
+          <circle cx="380" cy="540" r="3" fill="#06b6d4" filter="url(#glow-blue)" />
+          <circle cx="780" cy="600" r="3" fill="#06b6d4" filter="url(#glow-blue)" />
+
+          {/* Green circuit - top right diagonal */}
+          <path d="M800,0 L750,50 L750,120 L700,170 L700,250 L650,300"
+            stroke="#22c55e" strokeWidth="1" opacity="0.6" filter="url(#glow-green)" strokeLinejoin="round" />
+          <circle cx="750" cy="120" r="2.5" fill="#22c55e" opacity="0.6" />
+          <circle cx="700" cy="250" r="2.5" fill="#22c55e" opacity="0.6" />
+
+          {/* Blue circuit - left diagonal */}
+          <path d="M0,400 L80,400 L110,370 L200,370 L230,340 L300,340"
+            stroke="#06b6d4" strokeWidth="1" opacity="0.5" filter="url(#glow-blue)" strokeLinejoin="round" />
+          <circle cx="230" cy="340" r="2.5" fill="#06b6d4" opacity="0.5" />
+
+          {/* Green circuit - bottom left */}
+          <path d="M100,800 L150,750 L150,680 L200,630 L300,630"
+            stroke="#22c55e" strokeWidth="1" opacity="0.4" filter="url(#glow-green)" strokeLinejoin="round" />
+
+          {/* Blue circuit - top */}
+          <path d="M400,0 L400,60 L450,110 L450,180"
+            stroke="#06b6d4" strokeWidth="1" opacity="0.4" filter="url(#glow-blue)" strokeLinejoin="round" />
+          <circle cx="450" cy="110" r="2" fill="#06b6d4" opacity="0.4" />
         </svg>
-        {/* Right lines */}
-        <svg className="absolute top-1/4 -right-8 h-48 opacity-20" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ transform: 'scaleX(-1)' }}>
-          <path d="M0,100 L50,100 L70,80 L120,80 L140,60 L200,60" stroke="#2c4d32" strokeWidth="2" strokeLinejoin="round" />
-          <circle cx="200" cy="60" r="3" fill="#2c4d32" />
+
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(34,197,94,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94,0.3) 1px, transparent 1px)',
+            backgroundSize: '60px 60px'
+          }}
+        />
+
+        {/* ═══ Meenakshi Amman Temple - White Line Art ═══ */}
+        <svg className="absolute bottom-4 right-6 h-48 w-36 opacity-20" viewBox="0 0 140 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* Base platform */}
+          <rect x="5" y="250" width="130" height="25" rx="2" stroke="white" strokeWidth="1" />
+          <line x1="5" y1="260" x2="135" y2="260" stroke="white" strokeWidth="0.5" opacity="0.5" />
+
+          {/* First tier */}
+          <rect x="15" y="220" width="110" height="30" rx="1" stroke="white" strokeWidth="1" />
+          <line x1="35" y1="220" x2="35" y2="250" stroke="white" strokeWidth="0.5" opacity="0.5" />
+          <line x1="70" y1="220" x2="70" y2="250" stroke="white" strokeWidth="0.5" opacity="0.5" />
+          <line x1="105" y1="220" x2="105" y2="250" stroke="white" strokeWidth="0.5" opacity="0.5" />
+
+          {/* Second tier */}
+          <rect x="25" y="190" width="90" height="30" rx="1" stroke="white" strokeWidth="1" />
+          <rect x="40" y="195" width="15" height="20" rx="1" stroke="white" strokeWidth="0.5" opacity="0.6" />
+          <rect x="62" y="195" width="15" height="20" rx="1" stroke="white" strokeWidth="0.5" opacity="0.6" />
+          <rect x="84" y="195" width="15" height="20" rx="1" stroke="white" strokeWidth="0.5" opacity="0.6" />
+
+          {/* Third tier */}
+          <rect x="32" y="160" width="76" height="30" rx="1" stroke="white" strokeWidth="1" />
+          <path d="M45 165 L50 160 L55 165" stroke="white" strokeWidth="0.5" fill="none" />
+          <path d="M65 165 L70 160 L75 165" stroke="white" strokeWidth="0.5" fill="none" />
+          <path d="M85 165 L90 160 L95 165" stroke="white" strokeWidth="0.5" fill="none" />
+
+          {/* Fourth tier */}
+          <rect x="40" y="130" width="60" height="30" rx="1" stroke="white" strokeWidth="1" />
+          <rect x="52" y="135" width="8" height="20" rx="1" stroke="white" strokeWidth="0.5" opacity="0.6" />
+          <rect x="65" y="135" width="8" height="20" rx="1" stroke="white" strokeWidth="0.5" opacity="0.6" />
+          <rect x="78" y="135" width="8" height="20" rx="1" stroke="white" strokeWidth="0.5" opacity="0.6" />
+
+          {/* Fifth tier */}
+          <rect x="48" y="100" width="44" height="30" rx="1" stroke="white" strokeWidth="1" />
+          <path d="M55 105 L58 100 L61 105" stroke="white" strokeWidth="0.5" fill="none" />
+          <path d="M72 105 L75 100 L78 105" stroke="white" strokeWidth="0.5" fill="none" />
+
+          {/* Sixth tier */}
+          <rect x="54" y="75" width="32" height="25" rx="1" stroke="white" strokeWidth="1" />
+
+          {/* Gopuram crown */}
+          <path d="M58 75 L70 40 L82 75" stroke="white" strokeWidth="1" fill="none" />
+          <path d="M62 55 L70 42 L78 55" stroke="white" strokeWidth="0.5" fill="none" opacity="0.6" />
+
+          {/* Kalasam (top finial) */}
+          <path d="M67 40 L70 25 L73 40" stroke="white" strokeWidth="1" fill="none" />
+          <circle cx="70" cy="22" r="3" stroke="white" strokeWidth="0.8" fill="none" />
+          <line x1="70" y1="19" x2="70" y2="15" stroke="white" strokeWidth="0.8" />
+          <path d="M68 15 L70 10 L72 15" stroke="white" strokeWidth="0.5" fill="none" />
+
+          {/* Side pillars */}
+          <line x1="20" y1="220" x2="20" y2="250" stroke="white" strokeWidth="1.5" opacity="0.7" />
+          <line x1="120" y1="220" x2="120" y2="250" stroke="white" strokeWidth="1.5" opacity="0.7" />
+
+          {/* Decorative dots */}
+          <circle cx="30" cy="235" r="1" fill="white" opacity="0.4" />
+          <circle cx="110" cy="235" r="1" fill="white" opacity="0.4" />
+          <circle cx="70" cy="235" r="1" fill="white" opacity="0.4" />
         </svg>
-        {/* Bottom Left decorative */}
-        <svg className="absolute bottom-10 left-10 h-32 opacity-10" viewBox="0 0 100 100" fill="none">
-          <path d="M50 100 V30 M30 100 V50 M70 100 V60 M10 100 V80 M90 100 V70" stroke="#2c4d32" strokeWidth="1" />
-          <path d="M40 30 L50 20 L60 30 Z" fill="#2c4d32" />
+
+        {/* Small star accents */}
+        <svg className="absolute top-[15%] right-[12%] opacity-30" width="12" height="12" viewBox="0 0 16 16" fill="none">
+          <path d="M8 0 L9.5 6.5 L16 8 L9.5 9.5 L8 16 L6.5 9.5 L0 8 L6.5 6.5 Z" fill="#22c55e" />
         </svg>
-        {/* Bottom Right decorative (Temple) */}
-        <svg className="absolute bottom-4 right-8 h-24 opacity-20" viewBox="0 0 100 100" fill="none">
-          <rect x="20" y="80" width="60" height="20" stroke="#b28c40" strokeWidth="1" />
-          <rect x="30" y="60" width="40" height="20" stroke="#b28c40" strokeWidth="1" />
-          <rect x="40" y="40" width="20" height="20" stroke="#b28c40" strokeWidth="1" />
-          <path d="M45 40 L50 30 L55 40 Z" fill="#b28c40" />
-          <path d="M35 80 V100" stroke="#b28c40" strokeWidth="1" />
-          <path d="M65 80 V100" stroke="#b28c40" strokeWidth="1" />
+        <svg className="absolute bottom-[25%] left-[8%] opacity-20" width="10" height="10" viewBox="0 0 16 16" fill="none">
+          <path d="M8 0 L9.5 6.5 L16 8 L9.5 9.5 L8 16 L6.5 9.5 L0 8 L6.5 6.5 Z" fill="#06b6d4" />
         </svg>
       </div>
 
+      {/* ═══ Main Content ═══ */}
       <div className="relative z-10 flex w-full max-w-md flex-col items-center">
-        {/* Top Banner Button */}
-        <div className="mb-4">
-          <div className="relative overflow-hidden rounded-xl bg-gradient-to-b from-[#44654b] via-[#334d38] to-[#273d2b] px-12 py-3 shadow-[0_10px_20px_-5px_rgba(39,61,43,0.5)] ring-1 ring-[#5c8a66] ring-offset-2 ring-offset-[#f7f8f6]">
-            {/* Subtle light sweep */}
-            <div className="absolute inset-0 bg-[linear-gradient(110deg,transparent_10%,rgba(255,255,255,0.1)_20%,transparent_30%)]"></div>
-            <div className="relative z-10 flex items-center gap-2">
-              <div className="flex items-center justify-center rounded-full bg-[#1b2f21] p-1 border border-[#64906d]">
-                <MapPin className="h-4 w-4 text-[#89eaa0]" />
+
+        {/* Namma Madurai Badge */}
+        <div className="mb-6">
+          <div className="relative overflow-hidden rounded-xl px-10 py-3 shadow-[0_0_30px_rgba(34,197,94,0.15)]"
+            style={{ background: 'linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(6,182,212,0.08) 100%)', border: '1px solid rgba(34,197,94,0.3)', backdropFilter: 'blur(20px)' }}
+          >
+            <div className="flex items-center gap-2.5">
+              <div className="flex items-center justify-center rounded-full p-1.5"
+                style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.4)' }}>
+                <MapPin className="h-4 w-4 text-emerald-400" />
               </div>
-              <span className="font-semibold tracking-wide text-white">Namma Madurai</span>
+              <span className="font-semibold tracking-wider text-white/90 text-sm uppercase">Namma Madurai</span>
             </div>
           </div>
         </div>
 
-        {/* Main Card */}
+        {/* ═══ Glassmorphism Login Card ═══ */}
         <div className="relative w-full">
-          {/* Glowing Green Border Background */}
-          <div className="absolute -inset-[2px] rounded-2xl bg-gradient-to-br from-[#80d096] to-[#519f66] opacity-60 mix-blend-multiply blur-[2px]"></div>
+          {/* Outer glow */}
+          <div className="absolute -inset-[1px] rounded-2xl opacity-50 blur-sm"
+            style={{ background: 'linear-gradient(135deg, rgba(34,197,94,0.4), rgba(6,182,212,0.2), rgba(34,197,94,0.3))' }} />
 
-          <div className="relative rounded-xl border border-[#aecda4] bg-[#f8faf8] p-8 shadow-2xl">
+          <div className="relative rounded-2xl p-8 shadow-2xl"
+            style={{
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)',
+              backdropFilter: 'blur(24px)',
+              WebkitBackdropFilter: 'blur(24px)',
+              border: '1px solid rgba(255,255,255,0.12)',
+              boxShadow: '0 25px 50px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1)'
+            }}
+          >
 
-            {/* Inner bottom decorative elements */}
-            <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-24 overflow-hidden rounded-b-xl opacity-10">
-              <svg className="absolute -left-4 bottom-0 h-32" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
-                <path d="M20 100 V40 M30 100 V60 M10 100 V80" stroke="#1d4d29" strokeWidth="2" opacity="0.5" />
-              </svg>
-            </div>
-
-            <div className="relative z-10 text-center mb-6">
-              <h1 className="font-serif text-2xl font-bold tracking-tight text-[#0f2416]">
+            <div className="text-center mb-7">
+              <h1 className="font-serif text-3xl font-bold tracking-tight text-white">
                 Vaanga
               </h1>
-              <p className="mt-1 text-sm text-[#465d4b]">
+              <p className="mt-1.5 text-sm text-white/50">
                 Sign in to continue to your dashboard
               </p>
             </div>
 
-            <div className="relative z-10 space-y-4">
+            <div className="space-y-4">
               {/* Google Sign In */}
               <button
                 type="button"
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-b from-[#f1f1f1] to-[#dcdcdc] border border-[#cfcfcf] py-2.5 font-medium text-[#444] shadow-inner transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                className="flex w-full items-center justify-center gap-2 rounded-xl py-3 font-medium text-white/80 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                style={{
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  backdropFilter: 'blur(10px)'
+                }}
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -169,51 +286,58 @@ const SignIn = () => {
                 Continue with Google
               </button>
 
-              <div className="relative my-4">
+              <div className="relative my-5">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-[#d8e4da]" />
+                  <span className="w-full" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }} />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-[#f8faf8] px-2 text-[#7f9885]">
+                  <span className="px-3 text-white/30" style={{ background: 'transparent' }}>
                     or continue with email
                   </span>
                 </div>
               </div>
 
               {error && (
-                <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600 border border-red-200">
+                <div className="rounded-xl p-3 text-sm text-red-300"
+                  style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)' }}>
                   {error}
                 </div>
               )}
-              
+
               {successMessage && (
-                <div className="rounded-lg bg-green-50 p-3 text-sm text-green-600 border border-green-200">
+                <div className="rounded-xl p-3 text-sm text-emerald-300"
+                  style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)' }}>
                   {successMessage}
                 </div>
               )}
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-1">
-                  <label htmlFor="email" className="text-sm font-medium text-[#2d4432]">Email</label>
-                  <div className="relative">
-                    <input
-                      id="email"
-                      type="email"
-                      placeholder="you@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full rounded-lg border border-[#7dbb8c] bg-[#eef5ef] px-4 py-2 text-[#1a2e1d] placeholder:text-[#8ea995] focus:border-[#4d865c] focus:outline-none focus:ring-2 focus:ring-[#86d499]/50"
-                    />
-                  </div>
+                <div className="space-y-1.5">
+                  <label htmlFor="email" className="text-sm font-medium text-white/60">Email</label>
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full rounded-xl px-4 py-2.5 text-white placeholder:text-white/25 focus:outline-none transition-shadow"
+                    style={{
+                      background: 'rgba(255,255,255,0.05)',
+                      border: '1px solid rgba(34,197,94,0.2)',
+                      boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.2)',
+                    }}
+                    onFocus={(e) => { e.target.style.borderColor = 'rgba(34,197,94,0.5)'; e.target.style.boxShadow = '0 0 15px rgba(34,197,94,0.15), inset 0 1px 2px rgba(0,0,0,0.2)'; }}
+                    onBlur={(e) => { e.target.style.borderColor = 'rgba(34,197,94,0.2)'; e.target.style.boxShadow = 'inset 0 1px 2px rgba(0,0,0,0.2)'; }}
+                  />
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <label htmlFor="password" className="text-sm font-medium text-[#2d4432]">Password</label>
+                    <label htmlFor="password" className="text-sm font-medium text-white/60">Password</label>
                     <button
                       type="button"
                       onClick={handleForgotPassword}
-                      className="text-xs text-[#21813e] hover:underline"
+                      className="text-xs text-emerald-400/70 hover:text-emerald-400 transition-colors"
                     >
                       Forgot password?
                     </button>
@@ -225,9 +349,16 @@ const SignIn = () => {
                       placeholder="••••••••"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full rounded-lg border border-[#7dbb8c] bg-[#eef5ef] pl-4 pr-16 py-2 text-[#1a2e1d] placeholder:text-[#8ea995] focus:border-[#4d865c] focus:outline-none focus:ring-2 focus:ring-[#86d499]/50"
+                      className="w-full rounded-xl pl-4 pr-16 py-2.5 text-white placeholder:text-white/25 focus:outline-none transition-shadow"
+                      style={{
+                        background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid rgba(34,197,94,0.2)',
+                        boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.2)',
+                      }}
+                      onFocus={(e) => { e.target.style.borderColor = 'rgba(34,197,94,0.5)'; e.target.style.boxShadow = '0 0 15px rgba(34,197,94,0.15), inset 0 1px 2px rgba(0,0,0,0.2)'; }}
+                      onBlur={(e) => { e.target.style.borderColor = 'rgba(34,197,94,0.2)'; e.target.style.boxShadow = 'inset 0 1px 2px rgba(0,0,0,0.2)'; }}
                     />
-                    <div className="absolute right-3 flex items-center gap-2 text-[#7f9885]">
+                    <div className="absolute right-3 flex items-center gap-2 text-white/25">
                       <Lock className="h-4 w-4" />
                       <EyeOff className="h-4 w-4" />
                     </div>
@@ -237,7 +368,12 @@ const SignIn = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="relative mt-2 flex w-full items-center justify-center rounded-lg bg-gradient-to-b from-[#4a6b51] via-[#334d38] to-[#203324] px-4 py-2.5 font-semibold text-white shadow-[0_4px_10px_rgba(40,64,45,0.4)] transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 ring-1 ring-[#5c8a66] ring-offset-1 ring-offset-[#f8faf8]"
+                  className="relative mt-3 flex w-full items-center justify-center rounded-xl px-4 py-3 font-semibold text-white shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                  style={{
+                    background: 'linear-gradient(135deg, #166534 0%, #14532d 50%, #1a3a2a 100%)',
+                    boxShadow: '0 0 20px rgba(34,197,94,0.2), 0 4px 15px rgba(0,0,0,0.3)',
+                    border: '1px solid rgba(34,197,94,0.3)',
+                  }}
                 >
                   {isLoading ? (
                     <>
@@ -250,12 +386,10 @@ const SignIn = () => {
                 </button>
               </form>
 
-              <div className="mt-4 text-center text-sm text-[#465d4b]">
+              <div className="mt-5 text-center text-sm text-white/40">
                 Don't have an account?{" "}
-                <Link to="/select-role?mode=signup" className="relative font-medium text-[#21813e]">
+                <Link to="/select-role?mode=signup" className="font-medium text-emerald-400/80 hover:text-emerald-400 transition-colors">
                   Create one
-                  {/* Subtle glowing shadow for text */}
-                  <span className="absolute inset-0 blur-sm bg-[#86d499]/30 -z-10 rounded"></span>
                 </Link>
               </div>
             </div>

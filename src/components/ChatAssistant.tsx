@@ -291,20 +291,50 @@ const ChatAssistant = () => {
 
       {/* Chat window */}
       {open && (
-        <div className="fixed bottom-24 right-6 z-50 flex h-[28rem] w-80 flex-col overflow-hidden rounded-xl border bg-background shadow-xl sm:w-96">
-          <div className="flex items-center gap-2 border-b bg-primary px-4 py-3">
+        <div className="fixed bottom-24 right-6 z-50 flex h-[28rem] w-80 flex-col overflow-hidden rounded-xl border bg-[#f7f8f6] shadow-xl sm:w-96">
+          {/* Background decorative elements */}
+          <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl">
+            {/* Green orb top-left */}
+            <div className="absolute -top-4 -left-4 h-40 w-40 rounded-full bg-gradient-to-br from-[#3d8a52] to-[#2a7040]/60 blur-xl" />
+            {/* Golden orb bottom-right */}
+            <div className="absolute -bottom-2 -right-2 h-36 w-36 rounded-full bg-gradient-to-tl from-[#a8842e] to-[#c9a84a]/50 blur-xl" />
+            {/* Circuit lines top */}
+            <svg className="absolute top-8 left-6 w-full opacity-60" viewBox="0 0 300 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0,30 L40,30 L55,15 L100,15 L115,30 L160,30 L175,15 L220,15 L235,30 L300,30" stroke="#1a3320" strokeWidth="2" strokeLinejoin="round" />
+              <circle cx="55" cy="15" r="3" fill="#1a3320" />
+              <circle cx="175" cy="15" r="3" fill="#1a3320" />
+            </svg>
+            {/* Circuit lines bottom */}
+            <svg className="absolute bottom-12 right-2 w-3/4 opacity-60" viewBox="0 0 250 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0,25 L30,25 L45,10 L90,10 L105,25 L150,25 L165,40 L250,40" stroke="#1a3320" strokeWidth="2" strokeLinejoin="round" />
+              <circle cx="105" cy="25" r="3" fill="#1a3320" />
+            </svg>
+            {/* Arrows decorative */}
+            <svg className="absolute top-1/3 left-2 opacity-70" width="28" height="28" viewBox="0 0 20 20" fill="none">
+              <path d="M5 15 L15 5 M15 5 L15 12 M15 5 L8 5" stroke="#1a3320" strokeWidth="2.5" />
+            </svg>
+            <svg className="absolute bottom-1/3 right-4 opacity-70" width="28" height="28" viewBox="0 0 20 20" fill="none">
+              <path d="M5 15 L15 5 M15 5 L15 12 M15 5 L8 5" stroke="#1a3320" strokeWidth="2.5" />
+            </svg>
+            {/* Sparkle bottom-right */}
+            <svg className="absolute bottom-10 right-6 opacity-70" width="24" height="24" viewBox="0 0 16 16" fill="none">
+              <path d="M8 0 L9.5 6.5 L16 8 L9.5 9.5 L8 16 L6.5 9.5 L0 8 L6.5 6.5 Z" fill="#8a6a1e" />
+            </svg>
+          </div>
+
+          <div className="relative z-10 flex items-center gap-2 border-b bg-primary px-4 py-3">
             <MessageCircle className="h-5 w-5 text-primary-foreground" />
             <span className="font-semibold text-primary-foreground">Clean Madurai Assistant</span>
           </div>
 
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-3">
+          <div ref={scrollRef} className="relative z-10 flex-1 overflow-y-auto p-3 space-y-3">
             {messages.map((msg, i) => (
               <div key={i}>
                 <div className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                   <div
                     className={`max-w-[85%] rounded-lg px-3 py-2 text-sm whitespace-pre-line ${msg.role === "user"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-foreground"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-white/80 backdrop-blur-sm text-foreground border border-[#d8e4da]"
                       }`}
                   >
                     {msg.content}
@@ -318,7 +348,7 @@ const ChatAssistant = () => {
                         key={j}
                         onClick={() => handleButtonClick(btn)}
                         disabled={isLoading}
-                        className="rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-xs font-medium text-primary hover:bg-primary/15 hover:border-primary/50 transition-colors disabled:opacity-50"
+                        className="rounded-full border border-primary/30 bg-white/70 backdrop-blur-sm px-3 py-1 text-xs font-medium text-primary hover:bg-primary/15 hover:border-primary/50 transition-colors disabled:opacity-50"
                       >
                         {btn}
                       </button>
@@ -329,14 +359,14 @@ const ChatAssistant = () => {
             ))}
             {isLoading && messages[messages.length - 1]?.role === "user" && (
               <div className="flex justify-start">
-                <div className="rounded-lg bg-muted px-3 py-2">
+                <div className="rounded-lg bg-white/80 backdrop-blur-sm border border-[#d8e4da] px-3 py-2">
                   <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                 </div>
               </div>
             )}
           </div>
 
-          <div className="border-t p-2">
+          <div className="relative z-10 border-t bg-white/60 backdrop-blur-sm p-2">
             <form
               onSubmit={(e) => { e.preventDefault(); handleSend(); }}
               className="flex gap-2"
@@ -345,7 +375,7 @@ const ChatAssistant = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about waste, toilets..."
-                className="flex-1 text-sm"
+                className="flex-1 text-sm bg-white/80"
                 disabled={isLoading}
               />
               <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
