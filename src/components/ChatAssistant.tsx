@@ -8,7 +8,7 @@ type Msg = { role: "user" | "assistant"; content: string };
 const ChatAssistant = () => {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
-    { role: "assistant", content: "Vanakkam! I'm your Clean Madurai assistant. Ask me about nearest toilets, waste segregation, compost centers, or e-waste disposal." },
+    { role: "assistant", content: "Vanakam! I'm your Clean Madurai assistant. Ask me about nearest toilets, waste segregation, compost centers, or e-waste disposal." },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -129,11 +129,10 @@ const ChatAssistant = () => {
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div
-                  className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
-                    msg.role === "user"
+                  className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${msg.role === "user"
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-foreground"
-                  }`}
+                    }`}
                 >
                   {msg.content}
                 </div>
