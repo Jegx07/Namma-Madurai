@@ -47,7 +47,7 @@ const AdminLayout = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-background text-foreground">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
@@ -58,19 +58,18 @@ const AdminLayout = () => {
 
       {/* Sidebar - darker admin theme */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 transform border-r border-slate-700 bg-slate-900 transition-transform lg:static lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 w-64 transform border-r border-white/5 bg-black/60 backdrop-blur-xl shadow-[4px_0_30px_rgba(0,0,0,0.5)] transition-transform lg:static lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div className="flex h-full flex-col">
           {/* Logo */}
-          <div className="flex h-16 items-center gap-2 border-b border-slate-700 px-4">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-              <Shield className="h-5 w-5 text-primary-foreground" />
+          <div className="flex h-16 items-center gap-3 border-b border-white/10 px-4 bg-black/20">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/20 border border-primary/30 shadow-[0_0_10px_rgba(74,222,128,0.2)]">
+              <Shield className="h-5 w-5 text-primary drop-shadow-[0_0_5px_rgba(74,222,128,0.8)]" />
             </div>
             <div>
-              <span className="text-lg font-bold text-white">Admin Panel</span>
-              <p className="text-xs text-slate-400">Namma Madurai</p>
+              <span className="text-lg font-bold text-white tracking-widest uppercase text-sm drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]">Command</span>
+              <p className="text-[10px] text-primary tracking-[0.2em] font-mono">MADURAI.SYS</p>
             </div>
             <Button
               variant="ghost"
@@ -92,10 +91,9 @@ const AdminLayout = () => {
                   end={item.end}
                   onClick={() => setSidebarOpen(false)}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                      isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                    `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-mono tracking-wide transition-all ${isActive
+                      ? "bg-primary/20 text-primary border border-primary/30 shadow-[0_0_15px_rgba(74,222,128,0.1)]"
+                      : "text-slate-400 hover:bg-white/5 hover:text-white"
                     }`
                   }
                 >
@@ -107,9 +105,9 @@ const AdminLayout = () => {
           </ScrollArea>
 
           {/* Admin section */}
-          <div className="border-t border-slate-700 p-4">
+          <div className="border-t border-white/10 p-4 bg-black/20">
             <div className="mb-3 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 text-sm font-semibold text-primary">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20 border border-primary/30 shadow-[0_0_10px_rgba(74,222,128,0.2)] text-sm font-bold text-primary">
                 {user?.avatar || "A"}
               </div>
               <div className="flex-1 overflow-hidden">
@@ -132,20 +130,20 @@ const AdminLayout = () => {
       </aside>
 
       {/* Main content */}
-      <div className="flex flex-1 flex-col bg-slate-50">
+      <div className="flex flex-1 flex-col bg-transparent relative">
         {/* Mobile header */}
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-slate-200 bg-white px-4 lg:hidden">
-          <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
+        <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-white/10 bg-black/40 px-4 lg:hidden backdrop-blur-md">
+          <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)} className="text-slate-300">
             <Menu className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-primary" />
-            <span className="font-semibold">Admin Panel</span>
+            <Shield className="h-5 w-5 text-primary drop-shadow-[0_0_5px_rgba(74,222,128,0.5)]" />
+            <span className="font-bold tracking-widest text-sm uppercase text-white shadow-sm">Command</span>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-slate-50">
+        <main className="flex-1 overflow-y-auto bg-transparent relative z-10">
           <Outlet />
         </main>
       </div>
