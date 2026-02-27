@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Camera, MapPin, CheckCircle, Upload, Loader2, Sparkles } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { submitReport, updateUserScore } from "@/lib/database";
+import { supabaseReports, supabaseUserScores } from "@/lib/supabase";
 
 const UserReportIssue = () => {
   const { user } = useAuth();
@@ -75,24 +75,22 @@ const UserReportIssue = () => {
         construction: "damage",
       };
       
-      const reportId = await submitReport({
-        userId: user.id,
-        userName: user.name,
+      const report = await supabaseReports.create({
+        user_id: user.id,
+        user_name: user.name,
         type: typeMap[wasteType] || "other",
         description: description || `${wasteType} issue - Severity: ${severity}`,
-        location: {
-          lat: coordinates?.lat || 9.9252,
-          lng: coordinates?.lng || 78.1198,
-          address: location,
-        },
+        latitude: coordinates?.lat || 9.9252,
+        longitude: coordinates?.lng || 78.1198,
+        address: location || null,
         status: "pending",
-        imageUrl: photoPreview || undefined,
+        image_url: photoPreview || null,
       });
       
       // Award points to user for submitting report
-      await updateUserScore(user.id, user.name, user.email, 10);
+      await supabaseUserScores.upsertScore(user.id, user.name, user.email, 10);
       
-      setTicketId(`RPT-${reportId?.slice(-6).toUpperCase() || Math.floor(100000 + Math.random() * 900000)}`);
+      setTicketId(`RPT-${report.id.slice(-6).toUpperCase()}`);
       setSubmitted(true);
     } catch (error) {
       console.error("Error submitting report:", error);
