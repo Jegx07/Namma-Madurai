@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -30,8 +30,12 @@ const userNavItems = [
 
 const UserLayout = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout, isAuthenticated } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Hide chat assistant on map page
+  const isMapPage = location.pathname === "/user/map";
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -81,14 +85,14 @@ const UserLayout = () => {
       <NavBar items={navItems} />
 
       {/* Main content */}
-      <div className="flex flex-1 flex-col pt-4 pb-24 sm:pt-20 sm:pb-8">
-        <main className="flex-1 overflow-y-auto px-4 lg:px-8">
+      <div className={`flex flex-1 flex-col overflow-hidden ${isMapPage ? 'pt-0 pb-0 sm:pt-16 sm:pb-0' : 'pt-4 pb-24 sm:pt-20 sm:pb-8'}`}>
+        <main className={`flex-1 overflow-hidden ${isMapPage ? 'px-0' : 'px-4 lg:px-8 overflow-y-auto'}`}>
           <Outlet />
         </main>
       </div>
 
-      {/* Chat Assistant */}
-      <ChatAssistant />
+      {/* Chat Assistant - hidden on map page */}
+      {!isMapPage && <ChatAssistant />}
     </div>
   );
 };
