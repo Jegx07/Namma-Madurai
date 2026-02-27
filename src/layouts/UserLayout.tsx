@@ -16,8 +16,8 @@ import {
   X,
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { NavBar } from "@/components/ui/tubelight-navbar";
 import ChatAssistant from "@/components/ChatAssistant";
-
 const userNavItems = [
   { label: "Dashboard", path: "/user", icon: LayoutDashboard, end: true },
   { label: "Smart Map", path: "/user/map", icon: Map },
@@ -46,100 +46,43 @@ const UserLayout = () => {
     navigate("/");
   };
 
+  const navItems = userNavItems.map(item => ({
+    name: item.label,
+    url: item.path,
+    icon: item.icon
+  }));
+
   return (
-    <div className="flex min-h-screen bg-background">
-      {/* Mobile sidebar overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      {/* Sidebar */}
-      <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 transform border-r bg-sidebar transition-transform lg:static lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="flex h-full flex-col">
-          {/* Logo */}
-          <div className="flex h-16 items-center gap-2 border-b px-4">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-              <MapPin className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span className="text-lg font-bold text-sidebar-foreground">Namma Madurai</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="ml-auto lg:hidden"
-              onClick={() => setSidebarOpen(false)}
-            >
-              <X className="h-5 w-5" />
-            </Button>
+    <div className="flex min-h-screen flex-col bg-background">
+      {/* Minimal Header for Logo and actions */}
+      <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b bg-background/95 px-4 backdrop-blur lg:px-6">
+        <div className="flex items-center gap-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
+            <MapPin className="h-5 w-5 text-primary-foreground" />
           </div>
-
-          {/* Navigation */}
-          <ScrollArea className="flex-1 px-3 py-4">
-            <nav className="space-y-1">
-              {userNavItems.map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  end={item.end}
-                  onClick={() => setSidebarOpen(false)}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                      isActive
-                        ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                        : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                    }`
-                  }
-                >
-                  <item.icon className="h-5 w-5" />
-                  {item.label}
-                </NavLink>
-              ))}
-            </nav>
-          </ScrollArea>
-
-          {/* User section */}
-          <div className="border-t p-4">
-            <div className="mb-3 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-                {user?.avatar || "U"}
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <p className="truncate text-sm font-medium text-sidebar-foreground">
-                  {user?.name || "User"}
-                </p>
-                <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
-              </div>
-            </div>
-            <Button
-              variant="outline"
-              className="w-full justify-start gap-2"
-              onClick={handleLogout}
-            >
-              <LogOut className="h-4 w-4" />
-              Logout
-            </Button>
-          </div>
+          <span className="text-lg font-bold text-foreground">Namma Madurai</span>
         </div>
-      </aside>
+
+        <div className="flex items-center gap-4">
+          <div className="hidden items-center gap-2 sm:flex">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+              {user?.avatar || "U"}
+            </div>
+            <span className="text-sm font-medium">{user?.name || "User"}</span>
+          </div>
+          <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2">
+            <LogOut className="h-4 w-4" />
+            <span className="hidden sm:inline">Logout</span>
+          </Button>
+        </div>
+      </header>
+
+      {/* Top Navigation Bar (Tubelight) */}
+      <NavBar items={navItems} />
 
       {/* Main content */}
-      <div className="flex flex-1 flex-col">
-        {/* Mobile header */}
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4 lg:hidden">
-          <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)}>
-            <Menu className="h-5 w-5" />
-          </Button>
-          <span className="font-semibold">Namma Madurai</span>
-        </header>
-
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto">
+      <div className="flex flex-1 flex-col pt-4 pb-24 sm:pt-20 sm:pb-8">
+        <main className="flex-1 overflow-y-auto px-4 lg:px-8">
           <Outlet />
         </main>
       </div>
