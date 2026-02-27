@@ -67,7 +67,7 @@ const SignIn = () => {
 
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Vanga</CardTitle>
+          <CardTitle className="text-2xl">Vaanga</CardTitle>
           <CardDescription>Sign in to continue to your dashboard</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
