@@ -52,7 +52,7 @@ const UserDashboard = () => {
       {/* Welcome */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-foreground">
-          Vanga, {user?.name?.split(" ")[0] || "Citizen"}!
+          Vaanga, {user?.name?.split(" ")[0] || "Citizen"}!
         </h1>
         <p className="text-muted-foreground">
           Here's an overview of your civic contributions and city updates.
