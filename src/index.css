@@ -1,86 +1,88 @@
+@import "leaflet/dist/leaflet.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 150 10% 15%;
+    --background: 220 20% 6%;
+    --foreground: 210 20% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 150 10% 15%;
+    --card: 220 20% 10%;
+    --card-foreground: 210 20% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 150 10% 15%;
+    --popover: 220 20% 10%;
+    --popover-foreground: 210 20% 98%;
 
-    --primary: 125 54% 33%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 220 20% 6%;
 
-    --secondary: 140 20% 95%;
-    --secondary-foreground: 125 54% 25%;
+    --secondary: 220 15% 15%;
+    --secondary-foreground: 210 20% 98%;
 
-    --muted: 140 15% 95%;
-    --muted-foreground: 150 5% 45%;
+    --muted: 220 15% 15%;
+    --muted-foreground: 220 10% 60%;
 
-    --accent: 43 55% 51%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 142 71% 45%;
+    --accent-foreground: 220 20% 6%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 140 15% 90%;
-    --input: 140 15% 90%;
-    --ring: 125 54% 33%;
+    --border: 220 15% 15%;
+    --input: 220 15% 15%;
+    --ring: 142 71% 45%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 140 20% 97%;
-    --sidebar-foreground: 150 10% 25%;
-    --sidebar-primary: 125 54% 33%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 140 20% 93%;
-    --sidebar-accent-foreground: 150 10% 25%;
-    --sidebar-border: 140 15% 90%;
-    --sidebar-ring: 125 54% 33%;
+    --sidebar-background: 220 20% 8%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-primary: 142 71% 45%;
+    --sidebar-primary-foreground: 220 20% 6%;
+    --sidebar-accent: 220 15% 15%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 220 15% 15%;
+    --sidebar-ring: 142 71% 45%;
   }
 
   .dark {
-    --background: 150 10% 8%;
-    --foreground: 140 15% 95%;
+    --background: 220 20% 6%;
+    --foreground: 210 20% 98%;
 
-    --card: 150 10% 10%;
-    --card-foreground: 140 15% 95%;
+    --card: 220 20% 10%;
+    --card-foreground: 210 20% 98%;
 
-    --popover: 150 10% 10%;
-    --popover-foreground: 140 15% 95%;
+    --popover: 220 20% 10%;
+    --popover-foreground: 210 20% 98%;
 
-    --primary: 125 54% 40%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 220 20% 6%;
 
-    --secondary: 150 10% 15%;
-    --secondary-foreground: 140 15% 95%;
+    --secondary: 220 15% 15%;
+    --secondary-foreground: 210 20% 98%;
 
-    --muted: 150 10% 15%;
-    --muted-foreground: 140 10% 60%;
+    --muted: 220 15% 15%;
+    --muted-foreground: 220 10% 60%;
 
-    --accent: 43 55% 51%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 142 71% 45%;
+    --accent-foreground: 220 20% 6%;
 
-    --destructive: 0 62% 30%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 150 10% 18%;
-    --input: 150 10% 18%;
-    --ring: 125 54% 40%;
+    --border: 220 15% 15%;
+    --input: 220 15% 15%;
+    --ring: 142 71% 45%;
 
-    --sidebar-background: 150 10% 6%;
-    --sidebar-foreground: 140 15% 95%;
-    --sidebar-primary: 125 54% 40%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 150 10% 12%;
-    --sidebar-accent-foreground: 140 15% 95%;
-    --sidebar-border: 150 10% 18%;
-    --sidebar-ring: 125 54% 40%;
+    --sidebar-background: 220 20% 8%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-primary: 142 71% 45%;
+    --sidebar-primary-foreground: 220 20% 6%;
+    --sidebar-accent: 220 15% 15%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 220 15% 15%;
+    --sidebar-ring: 142 71% 45%;
   }
 }
 
@@ -93,4 +95,144 @@
     @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
   }
+}
+
+/* Leaflet map controls styling */
+.leaflet-container {
+  z-index: 0;
+  cursor: grab;
+}
+
+.leaflet-container:active {
+  cursor: grabbing;
+}
+
+.leaflet-dragging .leaflet-container {
+  cursor: grabbing;
+}
+
+/* Ensure zoom controls are visible and properly positioned */
+.leaflet-bottom.leaflet-right {
+  bottom: 20px;
+  right: 10px;
+}
+
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
+.leaflet-control-zoom a {
+  background-color: white !important;
+  color: #333 !important;
+  width: 40px !important;
+  height: 40px !important;
+  line-height: 40px !important;
+  font-size: 20px !important;
+  font-weight: bold !important;
+  border: none !important;
+  transition: background-color 0.2s !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background-color: #f0f0f0 !important;
+}
+
+.leaflet-control-zoom-in {
+  border-radius: 8px 8px 0 0 !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+}
+
+.leaflet-control-zoom-out {
+  border-radius: 0 0 8px 8px !important;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.leaflet-popup-content {
+  margin: 12px 16px;
+}
+
+/* Ensure markers are clickable */
+.leaflet-marker-icon {
+  cursor: pointer;
+}
+
+/* Custom Pan Control Styles */
+.custom-pan-control {
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
+.custom-pan-control button {
+  transition: background-color 0.2s !important;
+}
+
+.custom-pan-control button:hover {
+  background-color: #f0f0f0 !important;
+}
+
+/* Hide/minimize map attribution */
+.leaflet-control-attribution {
+  display: none !important;
+}
+
+.leaflet-bottom.leaflet-left {
+  display: none !important;
+}
+
+/* Smart Map Dark Aesthetic */
+.dark-map-tiles {
+  filter: grayscale(100%) invert(100%) brightness(85%) contrast(120%) hue-rotate(180deg) sepia(20%);
+}
+
+.custom-marker-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-marker-icon-container {
+  width: 44px;
+  height: 44px;
+  background-color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 10;
+  position: relative;
+}
+
+.custom-marker-label {
+  margin-top: 4px;
+  background-color: rgba(20, 20, 20, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.custom-marker-label .smile {
+  font-size: 12px;
+}
+
+.leaflet-popup {
+  display: none !important;
+  /* Disabling default popups in favor of our custom React portal/overlay */
 }

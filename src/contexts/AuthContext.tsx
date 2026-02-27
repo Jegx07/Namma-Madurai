@@ -6,6 +6,7 @@ import {
   signInWithPopup,
   signOut,
   updateProfile,
+  sendPasswordResetEmail,
   User as FirebaseUser,
 } from "firebase/auth";
 import { auth, googleProvider } from "../../firebase";
@@ -27,6 +28,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   selectRole: (role: UserRole) => void;
   logout: () => void;
 }
@@ -79,18 +81,22 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-    } finally {
+    } catch (error) {
       setIsLoading(false);
+      throw error;
     }
+    setIsLoading(false);
   };
 
   const loginWithGoogle = async () => {
     setIsLoading(true);
     try {
       await signInWithPopup(auth, googleProvider);
-    } finally {
+    } catch (error) {
       setIsLoading(false);
+      throw error;
     }
+    setIsLoading(false);
   };
 
   const signup = async (name: string, email: string, password: string) => {
@@ -98,9 +104,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(result.user, { displayName: name });
-    } finally {
+      // Refresh user state after profile update
+      setUser(mapFirebaseUser(result.user));
+    } catch (error) {
       setIsLoading(false);
+      throw error;
     }
+    setIsLoading(false);
+  };
+
+  const resetPassword = async (email: string) => {
+    await sendPasswordResetEmail(auth, email);
   };
 
   const selectRole = (role: UserRole) => {
@@ -124,6 +138,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         login,
         loginWithGoogle,
         signup,
+        resetPassword,
         selectRole,
         logout,
       }}

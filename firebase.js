@@ -2,12 +2,14 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getDatabase } from "firebase/database";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyBZ1QubYsTfRL_A4XSQql2co_Lezgn_Fr0",
   authDomain: "namma-madurai1.firebaseapp.com",
+  databaseURL: "https://namma-madurai1-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "namma-madurai1",
   storageBucket: "namma-madurai1.firebasestorage.app",
   messagingSenderId: "574250969396",
@@ -19,6 +21,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
+const database = getDatabase(app);
 const googleProvider = new GoogleAuthProvider();
 
-export { app, analytics, auth, googleProvider };
+export { app, analytics, auth, database, googleProvider };
