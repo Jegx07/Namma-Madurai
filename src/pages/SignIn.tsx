@@ -5,10 +5,11 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const { login, loginWithGoogle, selectRole, isLoading } = useAuth();
+  const { login, loginWithGoogle, resetPassword, selectRole, isLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   // Get the pre-selected role from sessionStorage
   const pendingRole = sessionStorage.getItem("pending_role") as "citizen" | "admin" | null;
@@ -24,9 +25,32 @@ const SignIn = () => {
     }
   };
 
+  const handleForgotPassword = async () => {
+    setError("");
+    setSuccessMessage("");
+    
+    if (!email) {
+      setError("Please enter your email address first.");
+      return;
+    }
+    
+    try {
+      await resetPassword(email);
+      setSuccessMessage("Password reset email sent! Check your inbox.");
+    } catch (err: any) {
+      console.error("Reset password error:", err);
+      if (err.code === "auth/user-not-found") {
+        setError("No account found with this email.");
+      } else {
+        setError(err.message || "Failed to send reset email.");
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccessMessage("");
 
     if (!email || !password) {
       setError("Please fill in all fields");
@@ -36,8 +60,15 @@ const SignIn = () => {
     try {
       await login(email, password);
       navigateAfterAuth();
-    } catch {
-      setError("Invalid credentials. Please try again.");
+    } catch (err: any) {
+      console.error("Login error:", err);
+      if (err.code === "auth/user-not-found" || err.code === "auth/wrong-password" || err.code === "auth/invalid-credential") {
+        setError("Invalid email or password.");
+      } else if (err.code === "auth/too-many-requests") {
+        setError("Too many failed attempts. Please try again later.");
+      } else {
+        setError(err.message || "Invalid credentials. Please try again.");
+      }
     }
   };
 
@@ -154,6 +185,12 @@ const SignIn = () => {
                   {error}
                 </div>
               )}
+              
+              {successMessage && (
+                <div className="rounded-lg bg-green-50 p-3 text-sm text-green-600 border border-green-200">
+                  {successMessage}
+                </div>
+              )}
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1">
@@ -173,10 +210,13 @@ const SignIn = () => {
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <label htmlFor="password" className="text-sm font-medium text-[#2d4432]">Password</label>
-                    <span className="flex items-center gap-1 text-[10px] uppercase text-[#7f9885] tracking-tight">
-                      <Lock className="h-3 w-3" />
-                      Security icons
-                    </span>
+                    <button
+                      type="button"
+                      onClick={handleForgotPassword}
+                      className="text-xs text-[#21813e] hover:underline"
+                    >
+                      Forgot password?
+                    </button>
                   </div>
                   <div className="relative flex items-center">
                     <input

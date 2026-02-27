@@ -7,14 +7,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Camera, MapPin, CheckCircle, Upload, Loader2, Sparkles } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabaseReports, supabaseUserScores } from "@/lib/supabase";
 
 const UserReportIssue = () => {
+  const { user } = useAuth();
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [ticketId] = useState(`RPT-${Math.floor(100000 + Math.random() * 900000)}`);
+  const [ticketId, setTicketId] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [aiSuggestion, setAiSuggestion] = useState<string | null>(null);
   const [location, setLocation] = useState("");
+  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
   const [wasteType, setWasteType] = useState("");
   const [severity, setSeverity] = useState("");
   const [description, setDescription] = useState("");
@@ -36,17 +40,63 @@ const UserReportIssue = () => {
   };
 
   const handleDetectLocation = () => {
-    // Simulate location detection
-    setLocation("Vilakkuthoon Market, Madurai - 625002");
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setCoordinates({ lat: latitude, lng: longitude });
+          setLocation(`${latitude.toFixed(6)}, ${longitude.toFixed(6)} (Madurai)`);
+        },
+        () => {
+          // Fallback to default Madurai location
+          setCoordinates({ lat: 9.9252, lng: 78.1198 });
+          setLocation("Vilakkuthoon Market, Madurai - 625002");
+        }
+      );
+    } else {
+      setCoordinates({ lat: 9.9252, lng: 78.1198 });
+      setLocation("Vilakkuthoon Market, Madurai - 625002");
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) return;
+    
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsSubmitting(false);
-    setSubmitted(true);
+    try {
+      // Map waste type to report type
+      const typeMap: Record<string, "garbage" | "overflow" | "damage" | "other"> = {
+        garbage: "garbage",
+        overflow: "overflow",
+        street: "garbage",
+        hazardous: "other",
+        ewaste: "other",
+        construction: "damage",
+      };
+      
+      const report = await supabaseReports.create({
+        user_id: user.id,
+        user_name: user.name,
+        type: typeMap[wasteType] || "other",
+        description: description || `${wasteType} issue - Severity: ${severity}`,
+        latitude: coordinates?.lat || 9.9252,
+        longitude: coordinates?.lng || 78.1198,
+        address: location || null,
+        status: "pending",
+        image_url: photoPreview || null,
+      });
+      
+      // Award points to user for submitting report
+      await supabaseUserScores.upsertScore(user.id, user.name, user.email, 10);
+      
+      setTicketId(`RPT-${report.id.slice(-6).toUpperCase()}`);
+      setSubmitted(true);
+    } catch (error) {
+      console.error("Error submitting report:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const resetForm = () => {
@@ -54,9 +104,11 @@ const UserReportIssue = () => {
     setPhotoPreview(null);
     setAiSuggestion(null);
     setLocation("");
+    setCoordinates(null);
     setWasteType("");
     setSeverity("");
     setDescription("");
+    setTicketId(null);
   };
 
   return (

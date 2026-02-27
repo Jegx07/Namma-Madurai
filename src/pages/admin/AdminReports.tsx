@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,13 +8,35 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Search, Filter, Eye, UserPlus, CheckCircle, MapPin, Clock } from "lucide-react";
-import { mockAdminReports } from "@/data/mockData";
+import { Search, Filter, Eye, UserPlus, CheckCircle, MapPin, Clock, Loader2 } from "lucide-react";
+import { supabaseReports } from "@/lib/supabase";
+
+interface Report {
+  id: string;
+  user_id: string;
+  user_name: string;
+  type: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  address: string | null;
+  status: string;
+  image_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 const statusColors: Record<string, string> = {
-  Pending: "bg-accent text-accent-foreground",
-  "In Progress": "bg-primary text-primary-foreground",
-  Resolved: "bg-muted text-foreground",
+  pending: "bg-accent text-accent-foreground",
+  "in-progress": "bg-primary text-primary-foreground",
+  resolved: "bg-muted text-foreground",
+};
+
+const typeToSeverity: Record<string, string> = {
+  garbage: "Medium",
+  overflow: "High",
+  damage: "High",
+  other: "Low",
 };
 
 const severityVariants: Record<string, "destructive" | "default" | "secondary"> = {
@@ -24,15 +46,53 @@ const severityVariants: Record<string, "destructive" | "default" | "secondary"> 
 };
 
 const AdminReports = () => {
+  const [reports, setReports] = useState<Report[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [selectedReport, setSelectedReport] = useState<typeof mockAdminReports[0] | null>(null);
+  const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [assignModalOpen, setAssignModalOpen] = useState(false);
 
-  const filteredReports = mockAdminReports.filter((report) => {
+  useEffect(() => {
+    // Fetch initial reports
+    const fetchReports = async () => {
+      try {
+        const data = await supabaseReports.getAll();
+        setReports(data || []);
+      } catch (error) {
+        console.error("Error fetching reports:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReports();
+
+    // Subscribe to real-time changes
+    const subscription = supabaseReports.subscribeToChanges((payload) => {
+      console.log("Real-time update:", payload);
+      // Refresh reports on any change
+      fetchReports();
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleUpdateStatus = async (reportId: string, newStatus: 'pending' | 'in-progress' | 'resolved') => {
+    try {
+      await supabaseReports.updateStatus(reportId, newStatus);
+      setReports(reports.map(r => r.id === reportId ? { ...r, status: newStatus } : r));
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
+  };
+
+  const filteredReports = reports.filter((report) => {
     const matchesSearch =
       report.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      report.area.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (report.address || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
       report.type.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === "all" || report.status === statusFilter;
     return matchesSearch && matchesStatus;
@@ -65,9 +125,9 @@ const AdminReports = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="Pending">Pending</SelectItem>
-                <SelectItem value="In Progress">In Progress</SelectItem>
-                <SelectItem value="Resolved">Resolved</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="in-progress">In Progress</SelectItem>
+                <SelectItem value="resolved">Resolved</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -82,6 +142,11 @@ const AdminReports = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : (
           <Table>
             <TableHeader>
               <TableRow>
@@ -95,28 +160,30 @@ const AdminReports = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredReports.map((report) => (
+              {filteredReports.map((report) => {
+                const severity = typeToSeverity[report.type] || "Medium";
+                return (
                 <TableRow key={report.id}>
-                  <TableCell className="font-mono text-sm">{report.id}</TableCell>
+                  <TableCell className="font-mono text-sm">{report.id.slice(0, 8)}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
                       <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
-                      {report.area}
+                      {report.address || `${report.latitude.toFixed(4)}, ${report.longitude.toFixed(4)}`}
                     </div>
                   </TableCell>
-                  <TableCell>{report.type}</TableCell>
+                  <TableCell className="capitalize">{report.type}</TableCell>
                   <TableCell>
-                    <Badge variant={severityVariants[report.severity]}>{report.severity}</Badge>
+                    <Badge variant={severityVariants[severity]}>{severity}</Badge>
                   </TableCell>
                   <TableCell>
-                    <span className={`inline-block rounded px-2 py-1 text-xs font-medium ${statusColors[report.status]}`}>
-                      {report.status}
+                    <span className={`inline-block rounded px-2 py-1 text-xs font-medium capitalize ${statusColors[report.status]}`}>
+                      {report.status.replace("-", " ")}
                     </span>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
                       <Clock className="h-3.5 w-3.5" />
-                      {report.date}
+                      {new Date(report.created_at).toLocaleDateString()}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -130,7 +197,7 @@ const AdminReports = () => {
                         <Eye className="h-3.5 w-3.5" />
                         View
                       </Button>
-                      {report.status !== "Resolved" && (
+                      {report.status !== "resolved" && (
                         <Button
                           size="sm"
                           className="gap-1"
@@ -146,9 +213,11 @@ const AdminReports = () => {
                     </div>
                   </TableCell>
                 </TableRow>
-              ))}
+              );
+              })}
             </TableBody>
           </Table>
+          )}
         </CardContent>
       </Card>
 
@@ -157,44 +226,44 @@ const AdminReports = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Report Details</DialogTitle>
-            <DialogDescription>Report ID: {selectedReport?.id}</DialogDescription>
+            <DialogDescription>Report ID: {selectedReport?.id.slice(0, 8)}</DialogDescription>
           </DialogHeader>
           {selectedReport && (
             <div className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <Label className="text-muted-foreground">Location</Label>
-                  <p className="font-medium">{selectedReport.area}</p>
+                  <p className="font-medium">{selectedReport.address || `${selectedReport.latitude.toFixed(4)}, ${selectedReport.longitude.toFixed(4)}`}</p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">Waste Type</Label>
-                  <p className="font-medium">{selectedReport.type}</p>
+                  <p className="font-medium capitalize">{selectedReport.type}</p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">Severity</Label>
-                  <Badge variant={severityVariants[selectedReport.severity]} className="mt-1">
-                    {selectedReport.severity}
+                  <Badge variant={severityVariants[typeToSeverity[selectedReport.type] || "Medium"]} className="mt-1">
+                    {typeToSeverity[selectedReport.type] || "Medium"}
                   </Badge>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">Status</Label>
-                  <p className={`inline-block mt-1 rounded px-2 py-0.5 text-sm font-medium ${statusColors[selectedReport.status]}`}>
-                    {selectedReport.status}
+                  <p className={`inline-block mt-1 rounded px-2 py-0.5 text-sm font-medium capitalize ${statusColors[selectedReport.status]}`}>
+                    {selectedReport.status.replace("-", " ")}
                   </p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">Reporter</Label>
-                  <p className="font-medium">{selectedReport.reporter}</p>
+                  <p className="font-medium">{selectedReport.user_name}</p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">Date</Label>
-                  <p className="font-medium">{selectedReport.date}</p>
+                  <p className="font-medium">{new Date(selectedReport.created_at).toLocaleDateString()}</p>
                 </div>
               </div>
-              {selectedReport.assignedTo && (
+              {selectedReport.description && (
                 <div>
-                  <Label className="text-muted-foreground">Assigned To</Label>
-                  <p className="font-medium">{selectedReport.assignedTo}</p>
+                  <Label className="text-muted-foreground">Description</Label>
+                  <p className="font-medium">{selectedReport.description}</p>
                 </div>
               )}
             </div>
@@ -203,7 +272,7 @@ const AdminReports = () => {
             <Button variant="outline" onClick={() => setSelectedReport(null)}>
               Close
             </Button>
-            {selectedReport?.status !== "Resolved" && (
+            {selectedReport?.status !== "resolved" && (
               <Button
                 onClick={() => setAssignModalOpen(true)}
                 className="gap-1"
