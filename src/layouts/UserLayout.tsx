@@ -12,8 +12,7 @@ import {
   MessageCircle,
   User,
   LogOut,
-  X,
-  MoreVertical
+  X
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import ChatAssistant from "@/components/ChatAssistant";
@@ -55,15 +54,22 @@ const UserLayout = () => {
       {/* Sidebar overlay (visible on all breakpoints when open) */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm"
+          className="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm transition-opacity"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar (hidden by default, open on toggle) */}
+      {/* Hover activation zone for sidebar */}
+      <div
+        className="fixed inset-y-0 left-0 w-6 z-40 hidden sm:block cursor-e-resize"
+        onMouseEnter={() => setSidebarOpen(true)}
+      />
+
+      {/* Sidebar (hidden by default, open on toggle or hover) */}
       <aside
         className={`fixed inset-y-0 left-0 z-50 w-64 transform border-r border-gray-200 bg-white transition-transform duration-300 ease-in-out shadow-2xl sm:shadow-none ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
+        onMouseLeave={() => setSidebarOpen(false)}
       >
         <div className="flex h-full flex-col">
           {/* Logo */}
@@ -141,9 +147,6 @@ const UserLayout = () => {
               </div>
               <span className="font-bold text-gray-900 tracking-tight text-lg">Namma Madurai</span>
             </div>
-            <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(true)} className="ml-1 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full h-9 w-9">
-              <MoreVertical className="h-5 w-5" />
-            </Button>
           </div>
 
           <div className="flex items-center gap-4">

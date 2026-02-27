@@ -69,14 +69,8 @@ const MapController = ({ center }: { center: [number, number] | null }) => {
   return null;
 };
 
-<<<<<<< HEAD
-const fillColor: Record<string, string> = { Low: "bg-emerald-500", Medium: "bg-amber-500", Full: "bg-rose-500" };
-const severityColor: Record<string, string> = { Low: "bg-emerald-100 text-emerald-700", Medium: "bg-amber-100 text-amber-700", High: "bg-rose-100 text-rose-700" };
-=======
-const fillColor: Record<string, string> = { Low: "bg-primary", Medium: "bg-accent", Full: "bg-destructive" };
-const severityColor: Record<string, string> = { pending: "bg-accent", "in-progress": "bg-primary", resolved: "bg-muted" };
-const typeToSeverity: Record<string, string> = { garbage: "High", overflow: "High", damage: "Medium", other: "Low" };
->>>>>>> 83a39f63a6159bcafedbd4b2ccce80b8f95d6976
+const fillColor: Record<string, string> = { Low: "bg-emerald-500", Medium: "bg-amber-500", Full: "bg-rose-500", default: "bg-gray-400" };
+const severityColor: Record<string, string> = { pending: "bg-amber-100 text-amber-700", "in-progress": "bg-blue-100 text-blue-700", resolved: "bg-gray-100 text-gray-700" };
 
 const UserSmartMap = () => {
   const [heatmap, setHeatmap] = useState(false);
@@ -126,10 +120,11 @@ const UserSmartMap = () => {
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col lg:flex-row bg-[#f3f4f6]">
       {/* Left Panel - Filters */}
-      <aside className="w-full shrink-0 overflow-y-auto border-b border-gray-200 bg-white p-6 lg:w-[340px] lg:border-b-0 lg:border-r shadow-sm z-10">
+      <aside className="w-full shrink-0 overflow-y-auto border-b border-gray-200 bg-white p-6 lg:w-[340px] lg:border-b-0 lg:border-r shadow-sm z-10 flex flex-col">
         <h2 className="mb-6 text-lg font-semibold text-gray-900 border-b border-gray-100 pb-4">Civic Filters</h2>
 
-        <Accordion type="multiple" defaultValue={["toilets"]} className="space-y-3">
+        <Accordion type="multiple" defaultValue={["toilets", "bins", "hotspots"]} className="space-y-3 flex-1">
+          {/* TOILETS SECTION */}
           <AccordionItem value="toilets" className="border-none">
             <AccordionTrigger className="rounded-xl bg-gray-50 px-4 py-3 text-sm font-semibold hover:no-underline hover:bg-gray-100 transition-colors border border-gray-100">
               <span className="flex items-center gap-3">
@@ -144,20 +139,15 @@ const UserSmartMap = () => {
                 {mockToilets.map((t) => (
                   <Card
                     key={t.id}
-<<<<<<< HEAD
                     className="cursor-pointer p-4 transition-all hover:border-emerald-200 hover:bg-emerald-50/50 border-gray-100 shadow-none rounded-xl"
-                    onClick={() => setSelectedMarker({ type: "toilet", data: t })}
-=======
-                    className="cursor-pointer p-3 transition-colors hover:bg-muted/30"
                     onClick={() => {
                       setSelectedMarker({ type: "toilet", data: t });
-                      setMapCenter([t.lat, t.lng]);
+                      if (t.lat && t.lng) setMapCenter([t.lat, t.lng]);
                     }}
->>>>>>> 83a39f63a6159bcafedbd4b2ccce80b8f95d6976
                   >
                     <div className="flex items-start justify-between">
                       <p className="text-sm font-semibold text-gray-800">{t.name}</p>
-                      <Badge variant={t.open ? "default" : "secondary"} className={`text-[10px] px-2 py-0 h-5 font-medium border-none ${t.open ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100' : 'bg-gray-100 text-gray-600 hover:bg-gray-100'}`}>
+                      <Badge variant={t.open ? "default" : "secondary"} className={`text-[10px] px-2 py-0 h-5 font-medium border-none ${t.open ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'}`}>
                         {t.open ? "Open" : "Closed"}
                       </Badge>
                     </div>
@@ -178,144 +168,89 @@ const UserSmartMap = () => {
             </AccordionContent>
           </AccordionItem>
 
+          {/* BINS SECTION */}
           <AccordionItem value="bins" className="border-none">
-<<<<<<< HEAD
             <AccordionTrigger className="rounded-xl bg-gray-50 px-4 py-3 text-sm font-semibold hover:no-underline hover:bg-gray-100 transition-colors border border-gray-100">
               <span className="flex items-center gap-3">
                 <div className="bg-white p-1.5 rounded-md shadow-sm">
                   <Trash2 className="h-4 w-4 text-blue-600" />
                 </div>
-                Garbage Bins
-=======
-            <AccordionTrigger className="rounded-lg bg-muted/50 px-3 py-2 text-sm font-semibold hover:no-underline">
-              <span className="flex items-center gap-2">
-                <Trash2 className="h-4 w-4 text-primary" /> Garbage Bins ({bins.length})
->>>>>>> 83a39f63a6159bcafedbd4b2ccce80b8f95d6976
+                Garbage Bins ({bins.length})
               </span>
             </AccordionTrigger>
             <AccordionContent className="px-1 pt-3 pb-1">
               <div className="space-y-2">
-<<<<<<< HEAD
-                {mockBins.map((b) => (
-                  <Card
-                    key={b.id}
-                    className="cursor-pointer p-4 transition-all hover:border-blue-200 hover:bg-blue-50/50 border-gray-100 shadow-none rounded-xl"
-                    onClick={() => setSelectedMarker({ type: "bin", data: b })}
-                  >
-                    <p className="text-sm font-semibold text-gray-800">{b.name}</p>
-                    <div className="mt-2.5 flex items-center gap-3 text-xs text-gray-500 font-medium">
-                      <div className="flex items-center gap-1.5">
-                        <span className={`inline-block h-2 w-2 rounded-full ${fillColor[b.fill]}`} />
-                        <span>{b.fill}</span>
-                      </div>
-                      <span className="flex items-center gap-1">
-                        <Navigation className="h-3 w-3" />
-                        {b.distance}
-                      </span>
-                      {b.smart && (
-                        <Badge variant="outline" className="text-[10px] uppercase tracking-wider font-semibold border-blue-200 text-blue-700 bg-blue-50 px-1.5 py-0 h-5">
-                          IoT
-                        </Badge>
-                      )}
-                    </div>
-                  </Card>
-                ))}
-=======
                 {loading ? (
                   <div className="flex justify-center py-4">
-                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                    <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
                   </div>
                 ) : bins.length === 0 ? (
-                  <p className="text-sm text-muted-foreground py-2">No bins found</p>
+                  <p className="text-sm text-gray-500 py-2">No bins found</p>
                 ) : (
                   bins.map((b) => (
                     <Card
                       key={b.id}
-                      className="cursor-pointer p-3 transition-colors hover:bg-muted/30"
+                      className="cursor-pointer p-4 transition-all hover:border-blue-200 hover:bg-blue-50/50 border-gray-100 shadow-none rounded-xl"
                       onClick={() => {
                         setSelectedMarker({ type: "bin", data: b });
                         setMapCenter([b.latitude, b.longitude]);
                       }}
                     >
-                      <p className="text-sm font-medium">{b.area}</p>
-                      <div className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
-                        <span className={`inline-block h-2 w-2 rounded-full ${fillColor[b.fill_level] || "bg-muted"}`} />
-                        <span>{b.fill_level}</span>
-                        <Badge variant="outline" className="text-xs">Live</Badge>
+                      <p className="text-sm font-medium text-gray-800">{b.area}</p>
+                      <div className="mt-2.5 flex items-center gap-3 text-xs text-gray-500 font-medium">
+                        <div className="flex items-center gap-1.5">
+                          <span className={`inline-block h-2 w-2 rounded-full ${fillColor[b.fill_level] || fillColor.default}`} />
+                          <span>{b.fill_level}</span>
+                        </div>
+                        <Badge variant="outline" className="text-[10px] uppercase tracking-wider font-semibold border-blue-200 text-blue-700 bg-blue-50 px-1.5 py-0 h-5">Live</Badge>
                       </div>
                     </Card>
                   ))
                 )}
->>>>>>> 83a39f63a6159bcafedbd4b2ccce80b8f95d6976
               </div>
             </AccordionContent>
           </AccordionItem>
 
+          {/* REPORTS SECTION */}
           <AccordionItem value="hotspots" className="border-none">
-<<<<<<< HEAD
             <AccordionTrigger className="rounded-xl bg-gray-50 px-4 py-3 text-sm font-semibold hover:no-underline hover:bg-gray-100 transition-colors border border-gray-100">
               <span className="flex items-center gap-3">
                 <div className="bg-white p-1.5 rounded-md shadow-sm">
                   <AlertTriangle className="h-4 w-4 text-amber-500" />
                 </div>
-                Waste Hotspots
-=======
-            <AccordionTrigger className="rounded-lg bg-muted/50 px-3 py-2 text-sm font-semibold hover:no-underline">
-              <span className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-accent" /> Active Reports ({reports.length})
->>>>>>> 83a39f63a6159bcafedbd4b2ccce80b8f95d6976
+                Active Reports ({reports.length})
               </span>
             </AccordionTrigger>
             <AccordionContent className="px-1 pt-3 pb-1">
               <div className="space-y-2">
-<<<<<<< HEAD
-                {mockHotspots.map((h) => (
-                  <Card
-                    key={h.id}
-                    className="cursor-pointer p-4 transition-all hover:border-amber-200 hover:bg-amber-50/50 border-gray-100 shadow-none rounded-xl"
-                    onClick={() => setSelectedMarker({ type: "hotspot", data: h })}
-                  >
-                    <div className="flex items-start justify-between">
-                      <p className="text-sm font-semibold text-gray-800">{h.name}</p>
-                      <span
-                        className={`inline-block rounded px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${severityColor[h.severity]}`}
-                      >
-                        {h.severity}
-                      </span>
-                    </div>
-                    <p className="mt-2 text-xs text-gray-500 font-medium">{h.reports} active reports</p>
-                  </Card>
-                ))}
-=======
                 {loading ? (
                   <div className="flex justify-center py-4">
-                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                    <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
                   </div>
                 ) : reports.length === 0 ? (
-                  <p className="text-sm text-muted-foreground py-2">No active reports</p>
+                  <p className="text-sm text-gray-500 py-2">No active reports</p>
                 ) : (
                   reports.map((r) => (
                     <Card
                       key={r.id}
-                      className="cursor-pointer p-3 transition-colors hover:bg-muted/30"
+                      className="cursor-pointer p-4 transition-all hover:border-amber-200 hover:bg-amber-50/50 border-gray-100 shadow-none rounded-xl"
                       onClick={() => {
                         setSelectedMarker({ type: "report", data: r });
                         setMapCenter([r.latitude, r.longitude]);
                       }}
                     >
                       <div className="flex items-start justify-between">
-                        <p className="text-sm font-medium capitalize">{r.type}</p>
+                        <p className="text-sm font-medium capitalize text-gray-800">{r.type}</p>
                         <span
-                          className={`inline-block rounded px-2 py-0.5 text-xs text-primary-foreground capitalize ${severityColor[r.status]}`}
+                          className={`inline-block rounded px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${severityColor[r.status] || 'bg-gray-100 text-gray-600'}`}
                         >
                           {r.status.replace("-", " ")}
                         </span>
                       </div>
-                      <p className="mt-1 text-xs text-muted-foreground">By {r.user_name}</p>
+                      <p className="mt-2 text-xs text-gray-500 font-medium">By {r.user_name}</p>
                     </Card>
                   ))
                 )}
->>>>>>> 83a39f63a6159bcafedbd4b2ccce80b8f95d6976
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -339,65 +274,24 @@ const UserSmartMap = () => {
             <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-none font-medium">
               <Trash2 className="mr-1.5 h-3 w-3" /> Bins
             </Badge>
-<<<<<<< HEAD
             <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-200 border-none font-medium">
-              <AlertTriangle className="mr-1.5 h-3 w-3" /> Hotspots
-=======
-            <Badge variant="outline">
-              <AlertTriangle className="mr-1 h-3 w-3" /> Reports
->>>>>>> 83a39f63a6159bcafedbd4b2ccce80b8f95d6976
+              <AlertTriangle className="mr-1.5 h-3 w-3" /> Reports
             </Badge>
           </div>
         </div>
       </aside>
 
       {/* Map Area */}
-<<<<<<< HEAD
-      <main className="relative flex flex-1 items-center justify-center bg-gray-200">
-        <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
-
-        {/* Placeholder for Google Maps */}
-        <div className="flex flex-col items-center gap-4 p-8 text-center bg-white/80 backdrop-blur-md rounded-2xl shadow-xl z-0 max-w-sm mx-4 border border-white">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-50 shadow-inner border border-emerald-100">
-            <MapPin className="h-10 w-10 text-emerald-600" />
-          </div>
-          <h3 className="text-lg font-semibold text-gray-900">Google Maps Frame</h3>
-          <p className="max-w-md text-sm text-gray-500 leading-relaxed font-medium">
-            Interactive map displays here with civic markers.
-            {heatmap && <span className="block mt-1 text-rose-600">Heatmap overlay active.</span>}
-          </p>
-          <div className="flex flex-wrap justify-center gap-2 mt-2">
-            <Badge variant="outline" className="text-gray-600 bg-white shadow-sm border-gray-200">4 Toilets</Badge>
-            <Badge variant="outline" className="text-gray-600 bg-white shadow-sm border-gray-200">4 Bins</Badge>
-            <Badge variant="outline" className="text-gray-600 bg-white shadow-sm border-gray-200">3 Hotspots</Badge>
-          </div>
-        </div>
-
-        {/* Selected Marker Popup */}
-        {selectedMarker && (
-          <div className="absolute bottom-8 left-1/2 w-80 -translate-x-1/2 rounded-xl border border-gray-200 bg-white p-5 shadow-2xl z-20">
-            <div className="mb-4 flex items-start justify-between">
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg ${selectedMarker.type === "toilet" ? "bg-emerald-50 text-emerald-600" :
-                    selectedMarker.type === "bin" ? "bg-blue-50 text-blue-600" :
-                      "bg-amber-50 text-amber-600"
-                  }`}>
-                  {selectedMarker.type === "toilet" && <MapPin className="h-5 w-5" />}
-                  {selectedMarker.type === "bin" && <Trash2 className="h-5 w-5" />}
-                  {selectedMarker.type === "hotspot" && <AlertTriangle className="h-5 w-5" />}
-                </div>
-                <h4 className="font-semibold text-gray-900">{selectedMarker.data.name}</h4>
-=======
-      <main className="relative flex-1 min-h-0">
+      <main className="relative flex-1 min-h-[400px]">
         {loading ? (
-          <div className="flex h-full items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <div className="flex h-full items-center justify-center bg-gray-100/50">
+            <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
           </div>
         ) : (
           <MapContainer
-            center={[9.9252, 78.1198]}
+            center={mapCenter || [9.9252, 78.1198]}
             zoom={14}
-            className="h-full w-full"
+            className={`h-full w-full z-0 transition-all ${heatmap ? 'brightness-90 contrast-125 sepia-[.2]' : ''}`}
             zoomControl={true}
           >
             <TileLayer
@@ -416,10 +310,10 @@ const UserSmartMap = () => {
                   click: () => setSelectedMarker({ type: "toilet", data: t }),
                 }}
               >
-                <Popup>
-                  <div className="font-medium">{t.name}</div>
-                  <div className="text-sm">Rating: {t.rating} ⭐</div>
-                  <div className="text-sm">{t.open ? "Open" : "Closed"}</div>
+                <Popup className="rounded-xl overflow-hidden shadow-lg border-none">
+                  <div className="font-semibold text-gray-900 border-b border-gray-100 pb-2 mb-2">{t.name}</div>
+                  <div className="text-sm text-gray-600 mb-1">Rating: {t.rating} <Star className="inline w-3 h-3 text-amber-500 fill-amber-500" /></div>
+                  <div className="text-sm font-medium text-emerald-600">{t.open ? "Open" : "Closed"}</div>
                 </Popup>
               </Marker>
             ))}
@@ -434,9 +328,12 @@ const UserSmartMap = () => {
                   click: () => setSelectedMarker({ type: "bin", data: b }),
                 }}
               >
-                <Popup>
-                  <div className="font-medium">{b.area}</div>
-                  <div className="text-sm">Fill: {b.fill_level}</div>
+                <Popup className="rounded-xl overflow-hidden shadow-lg border-none">
+                  <div className="font-semibold text-gray-900 border-b border-gray-100 pb-2 mb-2">{b.area}</div>
+                  <div className="text-sm font-medium text-blue-600 flex items-center gap-1.5">
+                    <span className={`inline-block h-2 w-2 rounded-full ${fillColor[b.fill_level] || fillColor.default}`} />
+                    Fill: {b.fill_level}
+                  </div>
                 </Popup>
               </Marker>
             ))}
@@ -451,111 +348,115 @@ const UserSmartMap = () => {
                   click: () => setSelectedMarker({ type: "report", data: r }),
                 }}
               >
-                <Popup>
-                  <div className="font-medium capitalize">{r.type}</div>
-                  <div className="text-sm capitalize">Status: {r.status.replace("-", " ")}</div>
-                  <div className="text-sm">By: {r.user_name}</div>
+                <Popup className="rounded-xl overflow-hidden shadow-lg border-none">
+                  <div className="font-semibold text-gray-900 border-b border-gray-100 pb-2 mb-2 capitalize">{r.type}</div>
+                  <div className={`text-sm font-semibold capitalize mb-1 ${r.status === 'resolved' ? 'text-gray-500' : 'text-amber-600'}`}>Status: {r.status.replace("-", " ")}</div>
+                  <div className="text-xs text-gray-500">By: {r.user_name}</div>
                 </Popup>
               </Marker>
             ))}
           </MapContainer>
         )}
 
-        {/* Selected Marker Popup */}
+        {/* Selected Marker Details Overlay */}
         {selectedMarker && (
-          <div className="absolute bottom-6 left-1/2 w-80 -translate-x-1/2 rounded-xl border bg-card p-4 shadow-lg z-[1000]">
-            <div className="mb-3 flex items-start justify-between">
-              <div className="flex items-center gap-2">
-                {selectedMarker.type === "toilet" && <MapPin className="h-5 w-5 text-primary" />}
-                {selectedMarker.type === "bin" && <Trash2 className="h-5 w-5 text-primary" />}
-                {selectedMarker.type === "report" && <AlertTriangle className="h-5 w-5 text-accent" />}
-                <h4 className="font-semibold capitalize">
+          <div className="absolute bottom-8 left-1/2 w-[340px] -translate-x-1/2 rounded-2xl border border-gray-100 bg-white/95 backdrop-blur-md p-5 shadow-2xl z-[1000]">
+            <div className="mb-4 flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg ${selectedMarker.type === "toilet" ? "bg-emerald-50 text-emerald-600 border border-emerald-100" :
+                  selectedMarker.type === "bin" ? "bg-blue-50 text-blue-600 border border-blue-100" :
+                    "bg-amber-50 text-amber-600 border border-amber-100"
+                  }`}>
+                  {selectedMarker.type === "toilet" && <MapPin className="h-5 w-5" />}
+                  {selectedMarker.type === "bin" && <Trash2 className="h-5 w-5" />}
+                  {selectedMarker.type === "report" && <AlertTriangle className="h-5 w-5" />}
+                </div>
+                <h4 className="font-bold text-gray-900 capitalize text-lg tracking-tight">
                   {selectedMarker.type === "toilet" && selectedMarker.data.name}
                   {selectedMarker.type === "bin" && selectedMarker.data.area}
                   {selectedMarker.type === "report" && selectedMarker.data.type}
                 </h4>
->>>>>>> 83a39f63a6159bcafedbd4b2ccce80b8f95d6976
               </div>
               <button
-                className="text-gray-400 hover:text-gray-600 transition-colors bg-gray-50 p-1 rounded-full hover:bg-gray-100"
+                className="text-gray-400 hover:text-gray-900 transition-colors bg-white hover:bg-gray-100 border border-gray-100 shadow-sm p-1.5 rounded-full"
                 onClick={() => setSelectedMarker(null)}
               >
-                ×
+                <X className="w-4 h-4" />
               </button>
             </div>
-<<<<<<< HEAD
 
-            <div className="space-y-3 text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100">
-              {"rating" in selectedMarker.data && (
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">Rating</span>
-                  <span className="flex items-center gap-1 font-semibold text-gray-900">
-                    <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
-                    {selectedMarker.data.rating}
-                  </span>
-                </div>
-              )}
-              {"distance" in selectedMarker.data && (
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">Distance</span>
-                  <span className="font-semibold text-gray-900">{selectedMarker.data.distance}</span>
-                </div>
-              )}
-              {"cleanliness" in selectedMarker.data && (
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">Cleanliness</span>
-                  <span className="font-semibold text-emerald-600">{selectedMarker.data.cleanliness}</span>
-                </div>
-              )}
-              {"fill" in selectedMarker.data && (
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">Fill Level</span>
-                  <span className="font-semibold text-gray-900">{selectedMarker.data.fill}</span>
-                </div>
-              )}
-              {"severity" in selectedMarker.data && (
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">Severity</span>
-                  <span className={`font-semibold ${selectedMarker.data.severity === 'High' ? 'text-rose-600' : selectedMarker.data.severity === 'Medium' ? 'text-amber-600' : 'text-emerald-600'}`}>
-                    {selectedMarker.data.severity}
-                  </span>
-                </div>
-=======
-            <div className="space-y-2 text-sm text-muted-foreground">
+            <div className="space-y-3 text-sm text-gray-600 bg-gray-50/80 p-4 rounded-xl border border-gray-100">
               {/* Toilet details */}
               {selectedMarker.type === "toilet" && (
                 <>
-                  <p className="flex items-center gap-1">
-                    <Star className="h-4 w-4 text-accent" />
-                    Rating: {selectedMarker.data.rating}
-                  </p>
-                  <p className="flex items-center gap-1">
-                    <Navigation className="h-4 w-4" />
-                    Distance: {selectedMarker.data.distance}
-                  </p>
-                  <p>Cleanliness: {selectedMarker.data.cleanliness}</p>
-                  <p>Status: {selectedMarker.data.open ? "Open" : "Closed"}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Rating</span>
+                    <span className="flex items-center gap-1 font-semibold text-gray-900">
+                      <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                      {selectedMarker.data.rating}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-500">Distance</span>
+                    <span className="font-semibold text-gray-900 flex items-center gap-1.5"><Navigation className="w-3.5 h-3.5 text-gray-400" /> {selectedMarker.data.distance}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-500">Cleanliness</span>
+                    <span className="font-semibold text-emerald-600">{selectedMarker.data.cleanliness}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-500">Status</span>
+                    <Badge variant={selectedMarker.data.open ? "default" : "secondary"} className={`text-[10px] px-2 py-0 border-none ${selectedMarker.data.open ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-200 text-gray-700'}`}>
+                      {selectedMarker.data.open ? "Open" : "Closed"}
+                    </Badge>
+                  </div>
                 </>
               )}
               {/* Bin details */}
               {selectedMarker.type === "bin" && (
                 <>
-                  <p>Fill Level: {selectedMarker.data.fill_level}</p>
-                  <p>Area: {selectedMarker.data.area}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-500">Fill Level</span>
+                    <div className="flex items-center gap-2">
+                      <span className={`inline-block h-2 w-2 rounded-full ${fillColor[selectedMarker.data.fill_level] || fillColor.default}`} />
+                      <span className="font-bold text-gray-900">{selectedMarker.data.fill_level}</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-500">Area</span>
+                    <span className="font-semibold text-gray-900">{selectedMarker.data.area}</span>
+                  </div>
                   {selectedMarker.data.last_collected && (
-                    <p>Last Collected: {new Date(selectedMarker.data.last_collected).toLocaleDateString()}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="font-medium text-gray-500">Last Collected</span>
+                      <span className="font-semibold text-gray-900">{new Date(selectedMarker.data.last_collected).toLocaleDateString()}</span>
+                    </div>
                   )}
                 </>
               )}
               {/* Report details */}
               {selectedMarker.type === "report" && (
                 <>
-                  <p className="capitalize">Type: {selectedMarker.data.type}</p>
-                  <p className="capitalize">Status: {selectedMarker.data.status.replace("-", " ")}</p>
-                  <p>Reported by: {selectedMarker.data.user_name}</p>
-                  {selectedMarker.data.description && <p>{selectedMarker.data.description}</p>}
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-500">Type</span>
+                    <span className="font-bold text-gray-900 capitalize">{selectedMarker.data.type}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-500">Status</span>
+                    <span className={`font-semibold capitalize ${severityColor[selectedMarker.data.status] || 'text-gray-900'}`}>
+                      {selectedMarker.data.status.replace("-", " ")}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-500">Reported by</span>
+                    <span className="font-semibold text-gray-900">{selectedMarker.data.user_name}</span>
+                  </div>
+                  {selectedMarker.data.description && (
+                    <div className="pt-2 mt-2 border-t border-gray-200/50">
+                      <p className="text-xs text-gray-600 italic">"{selectedMarker.data.description}"</p>
+                    </div>
+                  )}
                 </>
->>>>>>> 83a39f63a6159bcafedbd4b2ccce80b8f95d6976
               )}
             </div>
           </div>

@@ -16,8 +16,8 @@ const reportingTrendsData = [
 const miniBarData = Array.from({ length: 15 }).map(() => ({ value: Math.random() * 100 }));
 
 const areaReportTrends = Array.from({ length: 60 }).map((_, i) => {
-  let type = i < 35 ? 'Resolved' : i < 48 ? 'Progress' : 'Pending';
-  let value = type === 'Resolved' ? Math.random() * 30 + 70
+  const type = i < 35 ? 'Resolved' : i < 48 ? 'Progress' : 'Pending';
+  const value = type === 'Resolved' ? Math.random() * 30 + 70
     : type === 'Progress' ? Math.random() * 30 + 40
       : Math.random() * 30 + 10;
   return { name: `Day ${i + 1}`, value, type };
@@ -30,7 +30,7 @@ const gaugeData = [
 
 interface CustomTooltipProps {
   active?: boolean;
-  payload?: any[];
+  payload?: { value: number }[];
   label?: string;
 }
 
