@@ -77,69 +77,68 @@ const UserAssistant = () => {
   };
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="mx-auto max-w-3xl">
+    <div className="p-6 lg:p-8 bg-[#f3f4f6] min-h-screen text-slate-800">
+      <div className="mx-auto max-w-4xl">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-foreground">AI Assistant</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl font-semibold text-gray-900">AI Assistant</h1>
+          <p className="text-sm text-gray-500 mt-1">
             Get instant help with civic queries, waste management, and local facilities.
           </p>
         </div>
 
         {/* Quick Prompts */}
-        <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {quickPrompts.map((item) => (
             <Button
               key={item.label}
               variant="outline"
-              className="h-auto flex-col gap-2 p-4"
+              className="h-auto flex-col gap-3 p-5 bg-white border-none shadow-sm rounded-xl hover:bg-gray-50 text-gray-700 justify-start items-start text-left"
               onClick={() => sendMessage(item.prompt)}
               disabled={isLoading}
             >
-              <item.icon className="h-5 w-5 text-primary" />
-              <span className="text-xs">{item.label}</span>
+              <div className="bg-emerald-50 p-2 rounded-lg">
+                <item.icon className="h-5 w-5 text-emerald-600" />
+              </div>
+              <span className="text-sm font-medium">{item.label}</span>
             </Button>
           ))}
         </div>
 
         {/* Chat Card */}
-        <Card>
-          <CardHeader className="bg-primary/5 border-b">
-            <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
-                <Sparkles className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <div>
-                <CardTitle className="text-base">Clean Madurai Assistant</CardTitle>
-                <CardDescription>Powered by AI</CardDescription>
-              </div>
+        <Card className="bg-white border-none shadow-sm rounded-xl overflow-hidden">
+          <CardHeader className="bg-white border-b border-gray-100 flex flex-row items-center gap-4 px-6 py-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
+              <Sparkles className="h-5 w-5 text-emerald-600" />
+            </div>
+            <div>
+              <CardTitle className="text-base font-semibold text-gray-900">Clean Madurai Assistant</CardTitle>
+              <CardDescription className="text-xs text-emerald-600 font-medium mt-0.5">Powered by AI</CardDescription>
             </div>
           </CardHeader>
           <CardContent className="p-0">
             {/* Messages */}
-            <ScrollArea className="h-96 p-4" ref={scrollRef}>
-              <div className="space-y-4">
+            <ScrollArea className="h-[500px] p-6" ref={scrollRef}>
+              <div className="space-y-6">
                 {messages.map((msg, i) => (
                   <div
                     key={i}
                     className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[85%] rounded-lg px-4 py-3 text-sm ${
-                        msg.role === "user"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-foreground"
-                      }`}
+                      className={`max-w-[80%] rounded-2xl px-5 py-3.5 text-sm shadow-sm ${msg.role === "user"
+                          ? "bg-emerald-600 text-white rounded-tr-sm"
+                          : "bg-gray-100 text-gray-800 rounded-tl-sm border border-gray-200/50"
+                        }`}
                     >
-                      <div className="whitespace-pre-wrap">{msg.content}</div>
+                      <div className="whitespace-pre-wrap leading-relaxed">{msg.content}</div>
                     </div>
                   </div>
                 ))}
                 {isLoading && (
                   <div className="flex justify-start">
-                    <div className="flex items-center gap-2 rounded-lg bg-muted px-4 py-3">
-                      <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">Thinking...</span>
+                    <div className="flex items-center gap-3 rounded-2xl bg-gray-100 px-5 py-3.5 rounded-tl-sm border border-gray-200/50">
+                      <Loader2 className="h-4 w-4 animate-spin text-gray-500" />
+                      <span className="text-sm text-gray-600 font-medium">Thinking formulation...</span>
                     </div>
                   </div>
                 )}
@@ -147,15 +146,16 @@ const UserAssistant = () => {
             </ScrollArea>
 
             {/* Input */}
-            <form onSubmit={handleSubmit} className="flex gap-2 border-t p-4">
+            <form onSubmit={handleSubmit} className="flex gap-3 border-t border-gray-100 p-4 bg-gray-50/50">
               <Input
                 placeholder="Ask about toilets, bins, waste segregation..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 disabled={isLoading}
+                className="bg-white border-gray-200 shadow-sm rounded-xl h-12 px-4 focus-visible:ring-emerald-500"
               />
-              <Button type="submit" size="icon" disabled={!input.trim() || isLoading}>
-                <Send className="h-4 w-4" />
+              <Button type="submit" size="icon" disabled={!input.trim() || isLoading} className="h-12 w-12 rounded-xl bg-emerald-600 hover:bg-emerald-700 shadow-sm text-white">
+                <Send className="h-5 w-5" />
               </Button>
             </form>
           </CardContent>

@@ -62,7 +62,7 @@ const UserReportIssue = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-    
+
     setIsSubmitting(true);
     try {
       // Map waste type to report type
@@ -74,7 +74,7 @@ const UserReportIssue = () => {
         ewaste: "other",
         construction: "damage",
       };
-      
+
       const report = await supabaseReports.create({
         user_id: user.id,
         user_name: user.name,
@@ -86,10 +86,10 @@ const UserReportIssue = () => {
         status: "pending",
         image_url: photoPreview || null,
       });
-      
+
       // Award points to user for submitting report
       await supabaseUserScores.upsertScore(user.id, user.name, user.email, 10);
-      
+
       setTicketId(`RPT-${report.id.slice(-6).toUpperCase()}`);
       setSubmitted(true);
     } catch (error) {
@@ -112,30 +112,30 @@ const UserReportIssue = () => {
   };
 
   return (
-    <div className="p-6 lg:p-8">
+    <div className="p-6 lg:p-8 bg-[#f3f4f6] min-h-screen text-slate-800 font-sans">
       <div className="mx-auto max-w-2xl">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-foreground">Report an Issue</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl font-semibold text-gray-900">Report an Issue</h1>
+          <p className="text-sm text-gray-500 mt-1">
             Help keep Madurai clean by reporting civic issues in your area.
           </p>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Issue Details</CardTitle>
-            <CardDescription>
+        <Card className="bg-white border-none shadow-sm rounded-xl overflow-hidden">
+          <CardHeader className="border-b border-gray-50 bg-white p-6">
+            <CardTitle className="text-base font-semibold text-gray-900">Issue Details</CardTitle>
+            <CardDescription className="text-xs text-gray-500">
               Fill in the details below to submit your report. Our AI will help classify the waste type.
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Photo Upload */}
               <div>
-                <Label className="mb-2 block">Upload Photo</Label>
+                <Label className="mb-2 block text-xs font-medium text-gray-500 uppercase tracking-wider">Upload Photo</Label>
                 <div className="relative">
                   {photoPreview ? (
-                    <div className="relative overflow-hidden rounded-lg border">
+                    <div className="relative overflow-hidden rounded-xl border border-gray-200">
                       <img
                         src={photoPreview}
                         alt="Preview"
@@ -147,30 +147,32 @@ const UserReportIssue = () => {
                           setPhotoPreview(null);
                           setAiSuggestion(null);
                         }}
-                        className="absolute right-2 top-2 rounded-full bg-background/80 p-1.5 text-foreground hover:bg-background"
+                        className="absolute right-2 top-2 rounded-full bg-black/50 p-1.5 text-white hover:bg-black/70 transition-colors backdrop-blur-sm"
                       >
                         ×
                       </button>
                       {aiSuggestion && (
-                        <div className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
-                          <Sparkles className="h-3 w-3" />
+                        <div className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm">
+                          <Sparkles className="h-3.5 w-3.5" />
                           AI Detected: {aiSuggestion}
                         </div>
                       )}
                     </div>
                   ) : (
-                    <label className="flex h-40 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/30 transition-colors hover:bg-muted/50">
+                    <label className="flex h-40 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 transition-colors hover:bg-gray-100 hover:border-emerald-300">
                       <input
                         type="file"
                         accept="image/*"
                         className="hidden"
                         onChange={handlePhotoUpload}
                       />
-                      <Upload className="h-8 w-8 text-muted-foreground" />
-                      <span className="mt-2 text-sm text-muted-foreground">
+                      <div className="bg-white p-3 rounded-full shadow-sm mb-3">
+                        <Upload className="h-6 w-6 text-gray-400" />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700">
                         Click to upload or drag photo here
                       </span>
-                      <span className="mt-1 text-xs text-muted-foreground">
+                      <span className="mt-1 text-xs text-gray-500">
                         AI will auto-detect waste type
                       </span>
                     </label>
@@ -180,88 +182,90 @@ const UserReportIssue = () => {
 
               {/* Location */}
               <div>
-                <Label className="mb-2 block">Location</Label>
+                <Label className="mb-2 block text-xs font-medium text-gray-500 uppercase tracking-wider">Location</Label>
                 <div className="flex gap-2">
                   <Input
                     placeholder="Auto-detected location"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className="flex-1"
+                    className="flex-1 bg-gray-50/50 border-gray-200 focus-visible:ring-emerald-500 rounded-xl h-11"
                   />
                   <Button
                     type="button"
                     variant="outline"
-                    className="shrink-0 gap-2"
+                    className="shrink-0 gap-2 h-11 px-4 rounded-xl border-gray-200 text-gray-700 hover:bg-gray-50"
                     onClick={handleDetectLocation}
                   >
-                    <MapPin className="h-4 w-4" />
+                    <MapPin className="h-4 w-4 text-emerald-600" />
                     Detect
                   </Button>
                 </div>
               </div>
 
               {/* Waste Type */}
-              <div>
-                <Label className="mb-2 block">
-                  Waste Type
-                  {aiSuggestion && (
-                    <span className="ml-2 text-xs font-normal text-primary">
-                      (AI suggested: {aiSuggestion})
-                    </span>
-                  )}
-                </Label>
-                <Select value={wasteType} onValueChange={setWasteType}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select waste type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="garbage">Garbage Dump</SelectItem>
-                    <SelectItem value="overflow">Overflowing Bin</SelectItem>
-                    <SelectItem value="street">Street Waste</SelectItem>
-                    <SelectItem value="hazardous">Hazardous Waste</SelectItem>
-                    <SelectItem value="ewaste">E-Waste</SelectItem>
-                    <SelectItem value="construction">Construction Debris</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <div className="grid gap-6 sm:grid-cols-2">
+                <div>
+                  <Label className="mb-2 block text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Waste Type
+                    {aiSuggestion && (
+                      <span className="ml-2 text-[10px] font-medium text-emerald-600 normal-case tracking-normal bg-emerald-50 px-1.5 py-0.5 rounded">
+                        (AI suggested: {aiSuggestion})
+                      </span>
+                    )}
+                  </Label>
+                  <Select value={wasteType} onValueChange={setWasteType}>
+                    <SelectTrigger className="bg-gray-50/50 border-gray-200 focus:ring-emerald-500 rounded-xl h-11">
+                      <SelectValue placeholder="Select waste type" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-gray-100 shadow-lg">
+                      <SelectItem value="garbage">Garbage Dump</SelectItem>
+                      <SelectItem value="overflow">Overflowing Bin</SelectItem>
+                      <SelectItem value="street">Street Waste</SelectItem>
+                      <SelectItem value="hazardous">Hazardous Waste</SelectItem>
+                      <SelectItem value="ewaste">E-Waste</SelectItem>
+                      <SelectItem value="construction">Construction Debris</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-              {/* Severity */}
-              <div>
-                <Label className="mb-2 block">Severity Level</Label>
-                <Select value={severity} onValueChange={setSeverity}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select severity" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="low">Low - Minor issue</SelectItem>
-                    <SelectItem value="medium">Medium - Needs attention</SelectItem>
-                    <SelectItem value="high">High - Urgent</SelectItem>
-                  </SelectContent>
-                </Select>
+                {/* Severity */}
+                <div>
+                  <Label className="mb-2 block text-xs font-medium text-gray-500 uppercase tracking-wider">Severity Level</Label>
+                  <Select value={severity} onValueChange={setSeverity}>
+                    <SelectTrigger className="bg-gray-50/50 border-gray-200 focus:ring-emerald-500 rounded-xl h-11">
+                      <SelectValue placeholder="Select severity" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-gray-100 shadow-lg">
+                      <SelectItem value="low">Low - Minor issue</SelectItem>
+                      <SelectItem value="medium">Medium - Needs attention</SelectItem>
+                      <SelectItem value="high">High - Urgent</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               {/* Description (Optional) */}
               <div>
-                <Label className="mb-2 block">Additional Details (Optional)</Label>
+                <Label className="mb-2 block text-xs font-medium text-gray-500 uppercase tracking-wider">Additional Details (Optional)</Label>
                 <Textarea
                   placeholder="Describe the issue or add any relevant information..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={3}
+                  className="bg-gray-50/50 border-gray-200 focus-visible:ring-emerald-500 rounded-xl resize-none"
                 />
               </div>
 
               {/* Submit */}
               <Button
                 type="submit"
-                className="w-full gap-2"
-                size="lg"
+                className="w-full gap-2 h-12 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm transition-colors"
                 disabled={isSubmitting || !wasteType || !severity}
               >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Submitting...
+                    Submitting Report...
                   </>
                 ) : (
                   <>
@@ -277,37 +281,41 @@ const UserReportIssue = () => {
 
       {/* Success Modal */}
       <Dialog open={submitted} onOpenChange={setSubmitted}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader className="text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-              <CheckCircle className="h-8 w-8 text-primary" />
+        <DialogContent className="sm:max-w-md rounded-2xl border-none shadow-xl p-0 overflow-hidden">
+          <div className="bg-emerald-600 p-6 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm border border-white/30">
+              <CheckCircle className="h-8 w-8 text-white" />
             </div>
-            <DialogTitle className="text-center text-xl">Report Submitted Successfully</DialogTitle>
-            <DialogDescription className="text-center">
+            <DialogTitle className="text-center text-xl text-white font-semibold">Report Submitted Successfully</DialogTitle>
+            <DialogDescription className="text-center text-emerald-100 mt-2">
               Your report has been successfully submitted. Together, we're building a cleaner Madurai.
             </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-3 rounded-lg bg-muted p-4 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Ticket ID</span>
-              <span className="font-mono font-medium">{ticketId}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Estimated Resolution</span>
-              <span className="font-medium">24–48 hours</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Status</span>
-              <span className="font-medium text-accent">Pending Assignment</span>
-            </div>
           </div>
-          <div className="flex gap-3">
-            <Button variant="outline" className="flex-1" onClick={resetForm}>
-              Submit Another
-            </Button>
-            <Button className="flex-1" onClick={() => setSubmitted(false)}>
-              Done
-            </Button>
+          <div className="p-6 bg-white">
+            <div className="space-y-4 rounded-xl bg-gray-50 p-5 text-sm border border-gray-100 mb-6">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-500 font-medium">Ticket ID</span>
+                <span className="font-mono font-bold text-gray-900 bg-white px-2 py-1 rounded shadow-sm border border-gray-100">{ticketId}</span>
+              </div>
+              <div className="h-px bg-gray-200 w-full"></div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-500 font-medium">Estimated Resolution</span>
+                <span className="font-semibold text-gray-900">24–48 hours</span>
+              </div>
+              <div className="h-px bg-gray-200 w-full"></div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-500 font-medium">Status</span>
+                <span className="font-semibold text-amber-600 bg-amber-50 px-2 py-1 rounded-md">Pending Assignment</span>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <Button variant="outline" className="flex-1 rounded-xl h-11 border-gray-200 text-gray-700 hover:bg-gray-50 font-medium" onClick={resetForm}>
+                Submit Another
+              </Button>
+              <Button className="flex-1 rounded-xl h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-medium" onClick={() => setSubmitted(false)}>
+                Done
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
