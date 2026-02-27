@@ -150,8 +150,8 @@ export const ScrollHero = () => {
                         </h1>
 
                         {/* Subtext */}
-                        <p className="mb-10 max-w-2xl text-lg sm:text-xl text-white/80 font-light drop-shadow-md leading-relaxed">
-                            Locate public utilities, report cleanliness issues, and support your city using real-time civic intelligence powered by Google technologies.
+                        <p className="mb-10 max-w-3xl text-lg sm:text-xl text-white/80 font-light drop-shadow-md leading-relaxed">
+                            Locate public utilities, report cleanliness issues, and support your city using real-time civic intelligence powered by Google technologies. Namma Madurai is a smart city initiative designed to empower citizens by bringing together AI-driven waste classification, interactive smart mapping, and IoT-enabled infrastructure. Join us in transforming our heritage city into a cleaner, more sustainable, and forward-looking community.
                         </p>
 
                         {/* CTA Buttons */}
