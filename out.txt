@@ -1,0 +1,9 @@
+
+C:\SIT\Namma-Madurai\src\pages\user\UserDashboard.tsx
+  19:7   error  'type' is never reassigned. Use 'const' instead   prefer-const
+  20:7   error  'value' is never reassigned. Use 'const' instead  prefer-const
+  33:13  error  Unexpected any. Specify a different type          @typescript-eslint/no-explicit-any
+
+✖ 3 problems (3 errors, 0 warnings)
+  2 errors and 0 warnings potentially fixable with the `--fix` option.
+

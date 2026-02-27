@@ -1,409 +1,454 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mic, ArrowRight, SlidersHorizontal, ArrowUpRight, ArrowDownRight, Users, Bell, Search, Activity, FileText, TrendingUp, CheckCircle, MapPin, Clock } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { motion } from "framer-motion";
+import { Mic, ArrowUpRight, MapPin, Search, ArrowUp, Zap } from "lucide-react";
+import {
+  BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie
+} from "recharts";
 
-const recentActivity = [
-  { id: 1, type: "report", title: "Garbage dump reported", location: "Vilakkuthoon Market", status: "pending" },
-  { id: 2, type: "resolved", title: "Overflowing bin resolved", location: "Anna Nagar Bus", status: "resolved" },
-  { id: 3, type: "report", title: "Street waste reported", location: "KK Nagar Main", status: "in-progress" },
+// Data generation
+const reportingTrendsData = [
+  { name: 'Jan', value: 20 }, { name: 'Feb', value: 35 }, { name: 'Mar', value: 30 },
+  { name: 'Apr', value: 45 }, { name: 'May', value: 40 }, { name: 'Jun', value: 65 },
+  { name: 'Jul', value: 60 }, { name: 'Aug', value: 80 },
 ];
 
+const miniBarData = Array.from({ length: 15 }).map(() => ({ value: Math.random() * 100 }));
+
+const areaReportTrends = Array.from({ length: 60 }).map((_, i) => {
+  const type = i < 35 ? 'Resolved' : i < 48 ? 'Progress' : 'Pending';
+  const value = type === 'Resolved' ? Math.random() * 30 + 70
+    : type === 'Progress' ? Math.random() * 30 + 40
+      : Math.random() * 30 + 10;
+  return { name: `Day ${i + 1}`, value, type };
+});
+
+const gaugeData = [
+  { name: 'Completed', value: 51, fill: '#10b981' },
+  { name: 'Remaining', value: 49, fill: '#f3f4f6' }
+];
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: { value: number }[];
+  label?: string;
+}
+
+const CustomMiniTooltip = ({ active, payload }: CustomTooltipProps) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white text-gray-800 text-xs px-2 py-1 rounded shadow-lg border border-gray-100 font-medium">
+        {Math.round(payload[0].value)} units
+      </div>
+    );
+  }
+  return null;
+};
+
 const UserDashboard = () => {
-  const { user } = useAuth();
-  const firstName = user?.name?.split(" ")[0] || "Citizen";
-
   return (
-    <div className="min-h-screen bg-[#13161c] text-slate-200 font-sans p-6 pb-20 overflow-x-hidden">
+    <div className="min-h-screen bg-[#f3f4f6] text-slate-800 p-6 lg:p-8 font-sans flex flex-col gap-6">
 
-      {/* Top Header Section */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8 mt-2">
-        <div className="flex items-center gap-6">
-          <Button variant="ghost" size="icon" className="rounded-full border border-white/10 hover:bg-white/5 shadow-none">
-            <ArrowRight className="h-5 w-5 rotate-180" />
-          </Button>
-          <h1 className="text-3xl font-light tracking-widest uppercase text-white">
-            {firstName}'s <span className="text-slate-500 font-medium">HUB</span>
-          </h1>
-        </div>
-
-        <div className="flex items-center gap-8">
-          {/* Header Stats */}
+      {/* Top Header Row */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-2">
+        <div className="flex flex-col md:flex-row md:items-center gap-8">
           <div className="flex items-center gap-4">
-            <span className="text-3xl font-light text-white">12</span>
-            <div className="flex flex-col">
-              <div className="flex items-end gap-[2px] h-4 mb-1">
-                {[3, 5, 2, 7, 4, 6, 8, 5, 3, 7, 9, 6, 4, 8, 5].map((h, i) => (
-                  <div key={i} className="w-[3px] bg-[#63F148] rounded-[1px]" style={{ height: `${h * 10}%` }} />
-                ))}
-              </div>
-              <span className="text-[10px] text-slate-500 whitespace-nowrap">My Reports</span>
+            <h1 className="text-3xl font-light tracking-widest text-gray-900 uppercase">Dashboard</h1>
+            <div className="hidden md:flex items-center gap-1.5 opacity-50">
+              <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+              <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+              <span className="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <span className="text-3xl font-light text-white">9</span>
-            <div className="flex flex-col">
-              <div className="flex items-end gap-[2px] h-4 mb-1">
-                {[5, 7, 3, 8, 4, 9, 2, 6, 5, 8, 4, 7, 3, 5, 2].map((h, i) => (
-                  <div key={i} className="w-[3px] bg-[#FF9900] rounded-[1px]" style={{ height: `${h * 10}%` }} />
-                ))}
+          <div className="flex items-center gap-8">
+            {/* Stat 1 */}
+            <div className="flex items-center gap-3">
+              <div className="text-3xl font-medium text-gray-900 leading-none">124</div>
+              <div className="flex flex-col">
+                <div className="h-4 w-16 mb-0.5">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={miniBarData}>
+                      <Bar dataKey="value" fill="#10b981" radius={[1, 1, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <span className="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">Total Reports</span>
               </div>
-              <span className="text-[10px] text-slate-500 whitespace-nowrap">Resolved Issues</span>
             </div>
-          </div>
 
-          <div className="hidden xl:flex items-center gap-4">
-            <span className="text-3xl font-light text-white">3</span>
-            <div className="flex flex-col">
-              <div className="flex items-end gap-[2px] h-4 mb-1">
-                {[4, 6, 8, 3, 5, 7, 9, 4, 6, 8, 5, 7, 4, 6, 8].map((h, i) => (
-                  <div key={i} className="w-[3px] bg-[#63F148] rounded-[1px]" style={{ height: `${h * 10}%` }} />
-                ))}
+            {/* Stat 2 */}
+            <div className="flex items-center gap-3">
+              <div className="text-3xl font-medium text-gray-900 leading-none">82</div>
+              <div className="flex flex-col">
+                <div className="h-4 w-16 mb-0.5">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={miniBarData}>
+                      <Bar dataKey="value" fill="#f59e0b" radius={[1, 1, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <span className="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">Resolved</span>
               </div>
-              <span className="text-[10px] text-slate-500 whitespace-nowrap">Pending Actions</span>
+            </div>
+
+            {/* Stat 3 */}
+            <div className="flex items-center gap-3">
+              <div className="text-3xl font-medium text-gray-900 leading-none">42</div>
+              <div className="flex flex-col">
+                <div className="h-4 w-16 mb-0.5">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={miniBarData}>
+                      <Bar dataKey="value" fill="#ea580c" radius={[1, 1, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                <span className="text-[10px] text-gray-500 font-semibold uppercase tracking-wider">In Progress</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div>
-          <Button variant="outline" className="border-white/10 bg-transparent hover:bg-white/5 text-slate-300 gap-2 h-10 px-4 rounded-xl shadow-none">
-            <SlidersHorizontal className="h-4 w-4" />
-            Customization
-          </Button>
-        </div>
+        <Button variant="outline" className="rounded-full bg-transparent border-gray-300 text-gray-700 hover:bg-white px-6 font-medium tracking-wide">
+          <Search className="w-4 h-4 mr-2" />
+          Analytics
+        </Button>
       </div>
 
-      {/* Main Grid Layout - Dark Cards */}
+      {/* Main Grid: 3 columns */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        {/* Left Column */}
+        {/* Left Column (Span 3) */}
         <div className="lg:col-span-3 flex flex-col gap-6">
-
           {/* Card 1: Clean Score Gauge */}
-          <Card className="bg-[#1b1f27] border-white/5 shadow-xl rounded-[1.5rem] relative overflow-hidden">
+          <Card className="rounded-[20px] border-none shadow-sm bg-white overflow-hidden relative">
             <CardContent className="p-6">
-              <div className="flex justify-between items-start mb-6">
-                <div className="flex items-center gap-2 text-[#7f8a9e] text-sm">
-                  <MapPin className="h-4 w-4" />
-                  Madurai Central Zone
-                </div>
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-slate-500 -mt-1 -mr-2 hover:bg-white/5">
-                  <div className="w-4 h-4 border border-current rounded-sm flex items-center justify-center">
-                    <ArrowRight className="w-2 h-2 -rotate-45" />
-                  </div>
-                </Button>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                <span className="text-xs font-semibold text-emerald-600 uppercase tracking-widest">Active Score</span>
               </div>
+              <div className="text-xl font-medium text-gray-900 mb-1">CITY AVERAGE</div>
+              <div className="text-xs text-gray-400 font-medium mb-6">#NMA82030</div>
 
-              <div className="flex justify-between items-end mt-4">
-                <div>
-                  <div className="flex items-center gap-2 text-[#63F148] text-xs font-semibold mb-1">
-                    <div className="h-1.5 w-1.5 rounded-full bg-[#63F148]" /> Excellent
-                  </div>
-                  <h2 className="text-xl font-medium tracking-wide mb-1 text-white">CLEAN SCORE</h2>
-                  <p className="text-xs text-[#7f8a9e] font-mono">Top 15% Citywide</p>
-                </div>
-
-                {/* circular Gauge text matching image */}
-                <div className="relative w-[70px] h-[70px] flex items-center justify-center">
-                  <svg className="absolute inset-0 w-full h-full -rotate-90">
-                    <circle cx="35" cy="35" r="33" stroke="rgba(255,255,255,0.05)" strokeWidth="2.5" fill="none" />
-                    <circle cx="35" cy="35" r="33" stroke="#63F148" strokeWidth="2.5" fill="none" strokeDasharray="207" strokeDashoffset="37" strokeLinecap="round" />
-                  </svg>
-                  <div className="text-center mt-1">
-                    <p className="text-[9px] text-[#7f8a9e] mb-0.5">Score</p>
-                    <p className="text-lg font-light text-white leading-none">82</p>
+              <div className="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col items-center justify-center">
+                <div className="w-24 h-24 relative">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={gaugeData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={36}
+                        outerRadius={44}
+                        startAngle={90}
+                        endAngle={-270}
+                        dataKey="value"
+                        stroke="none"
+                        cornerRadius={4}
+                      >
+                        {gaugeData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-[10px] text-gray-500 font-medium uppercase mt-2">Score</span>
+                    <span className="text-lg font-bold text-gray-900 leading-none">82%</span>
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Card 2: Recent Activity List / Civic Activity */}
-          <Card className="bg-[#1b1f27] border-white/5 shadow-xl rounded-[1.5rem] flex-1">
-            <CardContent className="p-6 flex flex-col h-full justify-between">
+          {/* Card 2: Reporting Trends */}
+          <Card className="rounded-[20px] border-none shadow-sm bg-white flex-1 flex flex-col font-sans">
+            <CardContent className="p-6 flex-1 flex flex-col">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xs tracking-widest text-[#7f8a9e] uppercase">CIVIC ACTIVITY</h3>
-                <ArrowUpRight className="h-4 w-4 text-[#7f8a9e]" />
+                <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Reporting Trends</h3>
+                <ArrowUpRight className="w-4 h-4 text-gray-400" />
               </div>
 
-              <div className="space-y-4 mb-8">
-                {recentActivity.map((item, index) => (
-                  <div key={item.id} className="flex flex-col gap-1 border-b border-white/5 pb-3">
-                    <div className="flex justify-between items-start">
-                      <p className="text-sm font-medium text-white truncate max-w-[180px]">{item.title}</p>
-                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase ${item.status === 'resolved' ? 'bg-[#63F148]/20 text-[#63F148]' : 'bg-[#FF9900]/20 text-[#FF9900]'}`}>
-                        {item.status}
-                      </span>
-                    </div>
-                    <p className="text-xs text-[#7f8a9e] flex items-center gap-1">
-                      <MapPin className="h-3 w-3" /> {item.location}
-                    </p>
+              <div className="flex justify-between items-end mb-8 relative">
+                <div>
+                  <div className="text-xs text-gray-500 font-semibold mb-1">High Priority</div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-bold text-gray-900">4.82k</span>
+                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">+0.24</span>
                   </div>
-                ))}
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500 font-semibold mb-1">Low Priority</div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-bold text-gray-900">1.47k</span>
+                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">+0.18</span>
+                  </div>
+                </div>
+                <div className="absolute right-0 bottom-1">
+                  <div className="w-0 h-0 border-l-[4px] border-r-[4px] border-t-[6px] border-transparent border-t-emerald-500"></div>
+                </div>
               </div>
 
-              {/* Custom Bar Chart Graphic matches image spacing */}
-              <div className="mt-auto">
-                <div className="flex h-[80px] items-end justify-between border-l border-b border-white/10 pb-2 pl-3 pr-2 relative">
-                  {/* Y-axis labels */}
-                  <div className="absolute -left-7 bottom-2 flex flex-col justify-between h-full text-[9px] text-[#7f8a9e] py-0">
-                    <span>30</span>
-                    <span>15</span>
-                    <span>0</span>
-                  </div>
-
-                  {/* Bars: Twin thin lines per month as shown in image */}
-                  {[[15, 12], [14, 10], [18, 15], [20, 18], [16, 14], [14, 12], [22, 18], [19, 15]].map((heights, i) => (
-                    <div key={i} className="flex gap-1 items-end h-full relative group">
-                      {i === 7 && <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[#63F148] text-[8px]">▼</div>}
-                      <div className="w-[1.5px] rounded-t-sm bg-white" style={{ height: `${heights[0] * 3}px` }} />
-                      <div className={`w-[1.5px] rounded-t-sm ${i === 7 ? 'bg-[#63F148]' : 'bg-white/40'}`} style={{ height: `${heights[1] * 3}px` }} />
-                    </div>
-                  ))}
-                </div>
-                {/* X-axis labels */}
-                <div className="flex justify-between pl-3 pr-1 mt-3 text-[10px] text-[#7f8a9e]">
-                  <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span>
-                </div>
+              <div className="flex-1 w-full min-h-[120px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={reportingTrendsData}>
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca3af' }} dy={10} />
+                    <Tooltip content={<CustomMiniTooltip />} cursor={{ fill: '#f3f4f6' }} />
+                    <Bar dataKey="value" fill="#d1d5db" radius={[2, 2, 2, 2]} barSize={4}
+                      activeBar={<div style={{ fill: '#10b981' }} />} />
+                    {/* Using a custom trick for the active green bar on hover using activeBar natively or just setting a cell. 
+                         For simplicity, we'll map Cells. */}
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Middle Column: 3D Visualization Placeholder */}
-        <div className="lg:col-span-5 relative group">
-          <Card className="bg-[#1b1f27] border-white/5 rounded-[1.5rem] shadow-xl h-full overflow-hidden relative">
+        {/* Center Column (Span 6) - 3D Wireframe / Map area */}
+        <Card className="lg:col-span-6 rounded-[20px] border-none shadow-sm bg-white overflow-hidden relative min-h-[460px]">
+          {/* Subtle Grid Background */}
+          <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent z-10"></div>
 
-            <div className="absolute inset-0 flex items-center justify-center bg-[#181c25]">
-              <div className="absolute inset-x-0 bottom-0 top-[20%] bg-gradient-to-t from-blue-500/10 to-transparent mix-blend-screen" />
+          {/* Map Overlay Graphic (Abstract Representation) */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-80 pointer-events-none z-0">
+            <div className="w-4/5 h-4/5 border border-emerald-100/50 rounded-3xl relative" style={{ perspective: '1000px', transformStyle: 'preserve-3d', transform: 'rotateX(50deg) rotateZ(-20deg) scale(1.1)' }}>
+              {/* Grid planes to simulate 3D */}
+              <div className="absolute inset-0 border border-emerald-200 shadow-[0_0_30px_rgba(16,185,129,0.1)] rounded-3xl overflow-hidden" style={{ backgroundImage: 'linear-gradient(rgba(16, 185, 129, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(16, 185, 129, 0.1) 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+              <div className="absolute inset-4 border border-emerald-300/40 rounded-2xl bg-white/20 backdrop-blur-sm" style={{ transform: 'translateZ(40px)' }}></div>
+              <div className="absolute inset-12 border border-emerald-400/50 rounded-xl bg-emerald-50/30 backdrop-blur-md" style={{ transform: 'translateZ(80px)' }}></div>
 
-              {/* Replaced real estate room image with abstract cityscape to fit Civic theme */}
-              <img src="https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&q=80&w=800"
-                className="object-cover w-full h-full opacity-20 mix-blend-luminosity scale-110" alt="Cityscape placeholder" />
+              {/* 3D Pillars/Data points */}
+              <div className="absolute top-[20%] left-[30%] w-6 h-24 bg-gradient-to-t from-emerald-500/20 to-emerald-400/80 border-t border-l border-emerald-300 shadow-xl" style={{ transform: 'translateZ(48px)', transformOrigin: 'bottom' }}></div>
+              <div className="absolute top-[50%] left-[60%] w-8 h-32 bg-gradient-to-t from-emerald-600/20 to-emerald-500/90 border-t border-l border-emerald-200" style={{ transform: 'translateZ(64px)', transformOrigin: 'bottom' }}></div>
+              <div className="absolute top-[70%] left-[40%] w-5 h-16 bg-gradient-to-t from-amber-500/20 to-amber-400/80 border-t border-l border-amber-300" style={{ transform: 'translateZ(32px)', transformOrigin: 'bottom' }}></div>
+            </div>
+          </div>
 
-              <div className="absolute inset-0 bg-gradient-to-b from-[#1b1f27] via-transparent to-[#1b1f27] opacity-80" />
-
-              <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)', backgroundSize: '20px 20px', transform: 'perspective(500px) rotateX(60deg) scale(2)', transformOrigin: 'bottom' }} />
+          <CardContent className="p-8 relative z-20 h-full flex flex-col justify-between">
+            <div className="flex justify-between items-start w-full">
+              <Button variant="outline" className="bg-white/80 backdrop-blur shadow-sm border-gray-100 rounded-lg text-xs font-semibold h-8 text-gray-600">
+                <MapPin className="w-3 h-3 mr-1.5" /> 742 Anna Nagar, Madurai <ArrowUpRight className="w-3 h-3 ml-1" />
+              </Button>
             </div>
 
-            {/* Bottom right labels */}
-            <div className="absolute bottom-6 right-6 z-20 flex gap-6 text-left">
-              <div>
-                <p className="text-[10px] text-[#7f8a9e] mb-1">Total Reports</p>
-                <p className="text-xl font-light text-white">4.2K</p>
-              </div>
-              <div>
-                <p className="text-[10px] text-[#7f8a9e] mb-1">Active Users</p>
-                <p className="text-xl font-light text-white">1,400</p>
-              </div>
-              <div>
-                <p className="text-[10px] text-[#7f8a9e] mb-1">Resolved</p>
-                <p className="text-xl font-light text-white">3.1K</p>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {/* Right Column */}
-        <div className="lg:col-span-4 flex flex-col gap-6">
-
-          {/* Card 1: AI Assistant (Green Gradient) */}
-          <Card className="bg-gradient-to-br from-[#1c3021] to-[#172021] border-white/5 rounded-[1.5rem] shadow-xl overflow-hidden relative flex-1">
-            <div className="absolute inset-0 opacity-40 mix-blend-overlay">
-              <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-[60%] text-[#63F148]">
-                <path d="M0,50 Q25,20 50,50 T100,50" fill="none" stroke="currentColor" strokeWidth="0.5" />
-                <path d="M0,60 Q25,30 50,60 T100,60" fill="none" stroke="currentColor" strokeWidth="0.5" />
-                <path d="M0,40 Q25,10 50,40 T100,40" fill="none" stroke="currentColor" strokeWidth="0.5" />
-                <path d="M0,70 Q25,80 50,40 T100,70" fill="none" stroke="currentColor" strokeWidth="0.5" />
-                <path d="M0,30 Q30,90 60,30 T100,50" fill="none" stroke="currentColor" strokeWidth="0.5" />
-              </svg>
-            </div>
-
-            <CardContent className="p-6 flex flex-col h-full relative z-10 justify-end pt-12">
-
-              <div className="flex justify-center mb-10 absolute top-12 inset-x-0">
-                <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-[1rem] border border-white/10">
-                  <Mic className="h-6 w-6 text-white" />
+            <div className="w-full flex justify-between items-end">
+              <div className="flex gap-8">
+                <div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Reports Tracked</p>
+                  <p className="text-xl font-bold text-gray-900">2.5K</p>
                 </div>
-              </div>
-
-              <div className="mb-6 space-y-1 mt-20">
-                <p className="text-[13px] font-light text-[#a3b8b0] tracking-wide">I'M HERE <span className="text-white font-medium">TO HELP YOU REPORT</span></p>
-                <p className="text-[13px] font-light text-[#a3b8b0] tracking-wide"><span className="text-white font-medium">CIVIC ISSUES</span> EASIER.</p>
-                <p className="text-[13px] font-light text-[#a3b8b0] tracking-wide mt-1">HOW CAN <span className="text-white font-medium">I ASSIST YOU</span> TODAY?</p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 mb-6">
-                <Button variant="outline" className="bg-white/5 border-transparent hover:border-white/20 text-[#a3b8b0] hover:text-white hover:bg-white/10 justify-start gap-2 h-11 text-xs shadow-none">
-                  <FileText className="h-3.5 w-3.5" /> Track Report
-                </Button>
-                <Button variant="outline" className="bg-white/5 border-transparent hover:border-white/20 text-[#a3b8b0] hover:text-white hover:bg-white/10 justify-start gap-2 h-11 text-xs shadow-none">
-                  <Search className="h-3.5 w-3.5" /> Civic Rules
-                </Button>
-                <Button variant="outline" className="bg-white/5 border-transparent hover:border-white/20 text-[#a3b8b0] hover:text-white hover:bg-white/10 justify-start gap-2 h-11 text-xs shadow-none">
-                  <Users className="h-3.5 w-3.5" /> Contact Auth
-                </Button>
-                <Button variant="outline" className="bg-white/5 border-transparent hover:border-white/20 text-[#a3b8b0] hover:text-white hover:bg-white/10 justify-start gap-2 h-11 text-xs shadow-none">
-                  <TrendingUp className="h-3.5 w-3.5" /> Leaderboards
-                </Button>
-              </div>
-
-              <div className="relative">
-                <Input
-                  placeholder="Speak with Namma Assistant"
-                  className="bg-white/[0.03] border-white/10 h-[50px] text-sm pl-4 pr-14 text-white placeholder:text-[#a3b8b0]/70 shadow-none focus-visible:ring-1 focus-visible:ring-white/20 rounded-xl"
-                />
-                <Button size="icon" className="absolute right-1.5 top-1.5 h-[38px] w-[38px] rounded-lg bg-transparent hover:bg-white/10 border border-white/20">
-                  <ArrowRight className="h-4 w-4 text-white -rotate-90" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Card 2: Community Forum */}
-          <Card className="bg-gradient-to-br from-[#1c3021] to-[#172021] border-white/5 rounded-[1.5rem] shadow-xl h-[160px]">
-            <CardContent className="p-6 flex flex-col justify-between h-full relative">
-              <div>
-                <h3 className="text-xs tracking-widest text-[#a3b8b0] uppercase font-medium mb-1">COMMUNITY DRIVES</h3>
-                <p className="text-[10px] text-[#a3b8b0]/70">Next Event: Sunday 11:00 AM</p>
-              </div>
-
-              <div className="flex justify-between items-end">
-                <div className="max-w-[70%]">
-                  <div className="flex -space-x-2 mb-3">
-                    <img src="https://i.pravatar.cc/100?img=4" className="w-6 h-6 rounded-full border border-[#1c3021] object-cover" />
-                    <img src="https://i.pravatar.cc/100?img=5" className="w-6 h-6 rounded-full border border-[#1c3021] object-cover" />
-                    <img src="https://i.pravatar.cc/100?img=6" className="w-6 h-6 rounded-full border border-[#1c3021] object-cover" />
-                    <div className="w-6 h-6 rounded-full border border-[#1c3021] bg-white/10 flex items-center justify-center text-[8px] text-white">+50</div>
-                  </div>
-                  <p className="text-[11px] text-[#a3b8b0] leading-snug font-medium uppercase tracking-wide">
-                    JOIN THE <br /> LOCAL CLEANUP <br /> DRIVE IN ANNA <br /> NAGAR AREA!
+                <div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Clean Score</p>
+                  <p className="text-xl font-bold text-gray-900 leading-none flex items-center gap-1.5">
+                    88.4 <span className="text-xs font-bold text-emerald-500 bg-emerald-50 px-1.5 py-0.5 rounded">↑</span>
                   </p>
                 </div>
-                <Button variant="outline" size="icon" className="h-9 w-9 bg-transparent border-white/10 hover:bg-white/10 rounded-xl shadow-none">
-                  <ArrowUpRight className="h-4 w-4 text-[#a3b8b0]" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-      </div>
-
-      {/* Bottom Row: Light Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
-
-        {/* Card 1: CONDITIONAL LIABILITIES -> REPORT BREAKDOWN */}
-        <Card className="lg:col-span-4 bg-[#f8fbfa] text-slate-900 border-none rounded-[1.5rem] shadow-xl overflow-hidden">
-          <CardContent className="p-6">
-            <div className="flex justify-between items-center mb-1">
-              <h3 className="text-[11px] tracking-widest text-slate-500 uppercase font-medium">REPORT BREAKDOWN</h3>
-              <ArrowUpRight className="h-4 w-4 text-slate-400" />
-            </div>
-            <p className="text-[10px] text-slate-400 mb-8">Citywide Overview</p>
-
-            <div className="flex justify-between items-center">
-              <div className="space-y-5">
                 <div>
-                  <p className="text-[11px] text-slate-500 mb-1">Resolved</p>
-                  <p className="text-[28px] font-light leading-none">64<span className="text-sm font-medium text-slate-400">/100</span></p>
-                </div>
-                <div>
-                  <p className="text-[11px] text-slate-500 mb-1">In Progress</p>
-                  <p className="text-[28px] font-light leading-none">36<span className="text-sm font-medium text-slate-400">/100</span></p>
-                </div>
-              </div>
-
-              {/* Half Gauge Graphic */}
-              <div className="relative w-36 h-36 flex flex-col items-center justify-center -mr-2">
-                <svg className="absolute w-full h-full transform rotate-180">
-                  {/* Background track */}
-                  <circle cx="72" cy="72" r="50" stroke="#f1f5f9" strokeWidth="4" fill="none" strokeDasharray="157" strokeDashoffset="0" />
-                  {/* Orange path (In Progress) */}
-                  <circle cx="72" cy="72" r="50" stroke="#FF9900" strokeWidth="4" fill="none" strokeDasharray="157" strokeDashoffset="90" strokeLinecap="round" />
-                  {/* Green path (Resolved) */}
-                  <circle cx="72" cy="72" r="50" stroke="#63F148" strokeWidth="4" fill="none" strokeDasharray="157" strokeDashoffset="60" strokeLinecap="round" className="-rotate-[80deg] origin-center" />
-                </svg>
-                <div className="absolute right-[85px] top-[95px] flex items-center">
-                  <div className="bg-[#63F148] text-[#13161c] text-[9px] font-bold px-1.5 py-0.5 rounded z-10 shadow-sm relative mr-2">
-                    64%
-                  </div>
-                  <div className="w-8 border-t border-dashed border-slate-300" />
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Daily Value</p>
+                  <p className="text-xl font-bold text-gray-900 leading-none">1.2K</p>
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Card 2: RATE TRENDS -> RESOLUTION TRENDS */}
-        <Card className="lg:col-span-8 bg-[#f8fbfa] text-slate-900 border-none rounded-[1.5rem] shadow-xl">
-          <CardContent className="p-6 h-full flex flex-col">
-            <div className="flex justify-between items-center mb-1">
-              <h3 className="text-[11px] tracking-widest text-slate-500 uppercase font-medium">RESOLUTION TRENDS</h3>
-              <ArrowUpRight className="h-4 w-4 text-slate-400" />
-            </div>
-            <p className="text-[10px] text-slate-400 mb-8">This month vs Last month</p>
+        {/* Right Column (Span 3) */}
+        <div className="lg:col-span-3 flex flex-col gap-6">
+          {/* Card 4: AI Assistant (Themed Green) */}
+          <Card className="rounded-[20px] border-none shadow-[0_10px_30px_-10px_rgba(16,185,129,0.3)] bg-gradient-to-br from-[#064e3b] via-[#0f766e] to-[#042f2e] text-white flex-1 relative overflow-hidden">
+            <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at top right, #34d399, transparent 60%)' }}></div>
+            <CardContent className="p-6 relative z-10 flex flex-col h-full justify-between">
+              <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center mb-4 border border-white/20">
+                <Mic className="w-4 h-4 text-emerald-100" />
+              </div>
 
-            <div className="flex flex-wrap lg:flex-nowrap gap-x-12 gap-y-4 mb-4">
-              <div>
-                <p className="text-[11px] text-slate-500 mb-1">Average Time</p>
-                <p className="text-[28px] font-light leading-none">2<span className="text-sm font-medium text-slate-400 ml-1">days</span></p>
-              </div>
-              <div>
-                <p className="text-[11px] text-slate-500 mb-1">Peak Time</p>
-                <p className="text-[28px] font-light leading-none">5<span className="text-sm font-medium text-slate-400 ml-1">days</span></p>
-              </div>
-              <div className="relative pl-6 lg:ml-4">
-                <div className="absolute left-0 inset-y-0 w-px bg-slate-200" />
-                <p className="text-[11px] text-slate-400 mb-2">Efficiency Rating</p>
-                <p className="text-xl font-light text-slate-700 leading-none">88%</p>
-              </div>
-              <div className="lg:ml-auto flex gap-x-12 relative">
-                <div className="relative pl-6">
-                  <div className="absolute left-0 inset-y-0 w-[2px] bg-[#63F148]" />
-                  <p className="text-[11px] text-slate-400 mb-2">Resolved</p>
-                  <p className="text-xl font-light text-slate-700 leading-none">64%</p>
+              <div className="mb-4">
+                <h3 className="text-[11px] font-bold text-emerald-200/80 uppercase tracking-widest leading-relaxed mb-4">
+                  I'm here <span className="text-white">To make managing your reports easier.</span> <br />
+                  How can I <span className="text-white">Assist you</span> today?
+                </h3>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="bg-white/10 hover:bg-white/20 cursor-pointer backdrop-blur-sm border border-white/10 rounded-lg p-2.5 flex items-center gap-2 transition-colors">
+                    <Zap className="w-3.5 h-3.5 text-emerald-300" />
+                    <span className="text-[10px] font-medium text-emerald-50">Risk Analysis</span>
+                  </div>
+                  <div className="bg-white/10 hover:bg-white/20 cursor-pointer backdrop-blur-sm border border-white/10 rounded-lg p-2.5 flex items-center gap-2 transition-colors">
+                    <MapPin className="w-3.5 h-3.5 text-emerald-300" />
+                    <span className="text-[10px] font-medium text-emerald-50">Area Tracking</span>
+                  </div>
+                  <div className="bg-white/10 hover:bg-white/20 cursor-pointer backdrop-blur-sm border border-white/10 rounded-lg p-2.5 flex items-center gap-2 transition-colors">
+                    <div className="w-3.5 h-3.5 rounded bg-emerald-300/30 border border-emerald-300/50 flex items-center justify-center"><div className="w-1.5 h-1.5 bg-emerald-300 rounded-sm"></div></div>
+                    <span className="text-[10px] font-medium text-emerald-50">Report Status</span>
+                  </div>
+                  <div className="bg-white/10 hover:bg-white/20 cursor-pointer backdrop-blur-sm border border-white/10 rounded-lg p-2.5 flex items-center gap-2 transition-colors">
+                    <ArrowUp className="w-3.5 h-3.5 text-emerald-300" />
+                    <span className="text-[10px] font-medium text-emerald-50">Market Trends</span>
+                  </div>
                 </div>
-                <div className="relative pl-6">
-                  <div className="absolute left-0 inset-y-0 w-[2px] bg-[#FF9900]" />
-                  <p className="text-[11px] text-slate-400 mb-2">Pending</p>
-                  <p className="text-xl font-light text-slate-700 leading-none">36%</p>
+              </div>
+
+              <div className="relative">
+                <Input
+                  placeholder="Message AI Assistant"
+                  className="bg-white/10 border-white/20 text-white placeholder:text-emerald-100/50 h-10 rounded-xl pr-10 text-xs focus-visible:ring-emerald-400/50"
+                  style={{ backdropFilter: 'blur(8px)' }}
+                />
+                <button className="absolute right-1 top-1 w-8 h-8 flex items-center justify-center bg-white/20 rounded-lg hover:bg-white/30 transition-colors">
+                  <ArrowUp className="w-3.5 h-3.5 text-white" />
+                </button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Card 5: Community Forum */}
+          <Card className="rounded-[20px] border-none shadow-[0_10px_30px_-10px_rgba(20,83,45,0.3)] bg-gradient-to-br from-[#064e3b] via-[#14532d] to-[#022c22] text-white flex-1 relative overflow-hidden">
+            <CardContent className="p-6 relative z-10 flex flex-col h-full justify-between">
+              <div>
+                <h3 className="text-[11px] font-bold text-emerald-100/90 uppercase tracking-widest mb-1">Community Forum</h3>
+                <p className="text-[9px] text-emerald-300/60 font-medium tracking-wide">Updated 09/27/26 at 11:00 AM</p>
+
+                <div className="flex items-center gap-1 mt-4">
+                  <div className="flex -space-x-2">
+                    <div className="w-6 h-6 rounded-full border border-white/20 bg-emerald-800 flex items-center justify-center text-[8px]">U1</div>
+                    <div className="w-6 h-6 rounded-full border border-white/20 bg-teal-800 flex items-center justify-center text-[8px]">U2</div>
+                    <div className="w-6 h-6 rounded-full border border-white/20 bg-cyan-800 flex items-center justify-center text-[8px]">U3</div>
+                  </div>
+                  <div className="bg-white/20 text-[9px] font-bold px-1.5 py-0.5 rounded ml-1">+2K</div>
                 </div>
               </div>
+
+              <div className="flex items-end justify-between mt-6">
+                <p className="text-xs font-semibold text-white uppercase tracking-wider leading-relaxed">
+                  Connect with<br /><span className="text-emerald-300">Experts on</span><br />Civic Duty and<br />City Insights!
+                </p>
+                <div className="w-8 h-8 rounded-lg border border-white/20 flex items-center justify-center bg-white/5 hover:bg-white/10 cursor-pointer transition-colors">
+                  <ArrowUpRight className="w-4 h-4 text-emerald-100" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+      </div>
+
+      {/* Bottom Grid: 2 columns */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pb-6">
+
+        {/* Card 6: Conditional Liabilities -> Issue Breakdown */}
+        <Card className="lg:col-span-4 rounded-[20px] border-none shadow-sm bg-white overflow-hidden">
+          <CardContent className="p-6 h-[220px] flex flex-col relative">
+            <div className="flex justify-between items-start w-full relative z-10">
+              <div>
+                <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1">Issue Status Breakdowns</h3>
+                <p className="text-[10px] font-medium text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full inline-block">Active</p>
+              </div>
+              <ArrowUpRight className="w-4 h-4 text-gray-400" />
             </div>
 
-            {/* Density bar chart representation */}
-            <div className="mt-auto mb-2 flex items-end gap-[1.5px] h-14 w-full px-1">
-              {/* Generate tiny bars: dark grey, green, orange, light grey */}
-              {Array.from({ length: 140 }).map((_, i) => {
-                let color = "bg-slate-500";
-                let height = 30 + Math.random() * 40;
+            <div className="flex-1 mt-6 flex relative">
+              <div className="absolute left-0 top-2 flex flex-col gap-4">
+                <div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Resolved</p>
+                  <p className="text-xl font-bold text-gray-900 leading-none">18<span className="text-xs font-bold text-gray-400">/37</span></p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Pending</p>
+                  <p className="text-xl font-bold text-gray-900 leading-none">19<span className="text-xs font-bold text-gray-400">/37</span></p>
+                </div>
+              </div>
 
-                if (i > 105 && i < 125) color = "bg-[#FF9900]"; // Orange section
-                if (i > 90 && i <= 105) color = "bg-[#63F148]"; // Green section
-                if (i >= 125) {
-                  color = "bg-[#FF9900]";
-                  // make the tail fade with gray
-                  if (i > 130) color = "bg-[#FF9900]/50";
-                }
-                if (i < 91) color = "bg-slate-600";
+              <div className="absolute right-0 bottom-0 w-[140px] h-[140px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={[{ value: 51, fill: '#10b981' }, { value: 49, fill: '#f59e0b' }]}
+                      cx="100%"
+                      cy="100%"
+                      startAngle={180}
+                      endAngle={90}
+                      innerRadius={110}
+                      outerRadius={118}
+                      dataKey="value"
+                      stroke="none"
+                      isAnimationActive={false}
+                    >
+                      <Cell fill="#10b981" />
+                      <Cell fill="#f59e0b" />
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
 
-                if (i % 4 === 0) height += 10;
-                if (i === 115) height = 100;
-                if (i === 105) height = 90;
-                if (i === 135) height = 90;
+                {/* Dots on the arc */}
+                <div className="absolute -left-1 bottom-1 w-2.5 h-2.5 rounded-full bg-emerald-500 border-[3px] border-white shadow-sm"></div>
+                <div className="absolute right-[54px] top-[14px] w-2.5 h-2.5 rounded-full bg-[#f59e0b] border-[3px] border-white shadow-sm"></div>
 
-                return (
-                  <div key={i} className={`flex-1 rounded-[1px] ${color}`} style={{ height: `${height}%` }} />
-                )
-              })}
+                <div className="absolute top-[40%] left-[30%] bg-[#a3e635] text-[#166534] font-bold text-[10px] px-1.5 py-0.5 rounded shadow-sm">51%</div>
+                <div className="absolute top-[65%] left-[20%] font-bold text-gray-900 text-xs shadow-sm bg-white/80 rounded px-1">18<span className="text-[10px] text-gray-400">/37</span></div>
+              </div>
             </div>
-            <div className="flex justify-between text-[9px] text-slate-400 font-mono px-2 border-t border-slate-200 pt-2">
-              <span>Day 1</span>
-              <span>Day 31</span>
+          </CardContent>
+        </Card>
+
+        {/* Card 7: Mortgage Rate Trends -> Area Reporting Trends */}
+        <Card className="lg:col-span-8 rounded-[20px] border-none shadow-sm bg-white overflow-hidden">
+          <CardContent className="p-6 h-[220px] flex flex-col">
+            <div className="flex justify-between items-start w-full">
+              <div>
+                <h3 className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1">Area Report Trends</h3>
+                <p className="text-[10px] font-medium text-gray-400">This month</p>
+              </div>
+              <ArrowUpRight className="w-4 h-4 text-gray-400" />
+            </div>
+
+            <div className="flex-1 mt-4 flex">
+              <div className="w-24 flex flex-col gap-6 justify-center bg-white z-10 relative">
+                <div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Average</p>
+                  <p className="text-2xl font-bold text-gray-900 leading-none">44</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Highest</p>
+                  <p className="text-lg font-bold text-gray-900 leading-none">10</p>
+                </div>
+              </div>
+
+              <div className="flex-1 h-full flex flex-col pl-4 border-l border-gray-100">
+                <div className="flex justify-between w-full px-2 mb-2">
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Resolved</p>
+                    <p className="text-sm font-bold text-gray-900 leading-none">63%</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">In Progress</p>
+                    <p className="text-sm font-bold text-gray-900 leading-none">19%</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Pending</p>
+                    <p className="text-sm font-bold text-gray-900 leading-none">18%</p>
+                  </div>
+                </div>
+
+                <div className="flex-1 w-full mx-2 -mb-2 mt-2 border-l border-b border-gray-100 relative pt-2">
+                  <div className="absolute right-0 bottom-[-16px] text-[8px] text-gray-400 font-bold">100</div>
+                  <div className="absolute left-[-4px] bottom-[-16px] text-[8px] text-gray-400 font-bold">0</div>
+                  <ResponsiveContainer width="100%" height="80%">
+                    <BarChart data={areaReportTrends} barCategoryGap="20%">
+                      <Bar dataKey="value" radius={[2, 2, 0, 0]}>
+                        {areaReportTrends.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={
+                            entry.type === 'Resolved' ? '#9ca3af' :
+                              entry.type === 'Progress' ? '#10b981' :
+                                entry.type === 'Pending' ? '#f59e0b' : '#fcd34d'
+                          } />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
