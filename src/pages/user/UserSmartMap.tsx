@@ -3,7 +3,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Card } from "@/components/ui/card";
-import { MapPin, Trash2, AlertTriangle, Thermometer, Star, Navigation, Loader2 } from "lucide-react";
+import { MapPin, Trash2, AlertTriangle, Thermometer, Star, Navigation, Loader2, X } from "lucide-react";
 import { mockToilets } from "@/data/mockData";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
