@@ -1,10 +1,173 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Card } from "@/components/ui/card";
-import { MapPin, Trash2, AlertTriangle, Thermometer, Star, Navigation } from "lucide-react";
+import { MapPin, Trash2, AlertTriangle, Thermometer, Star, Navigation, Hand, Crosshair } from "lucide-react";
 import { mockToilets, mockBins, mockHotspots } from "@/data/mockData";
+import { MapContainer, TileLayer, Marker, Popup, useMap, ZoomControl } from "react-leaflet";
+import L from "leaflet";
+import { createPortal } from "react-dom";
+
+// Fix for default marker icons in Leaflet with Vite
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconUrl: markerIcon,
+  iconRetinaUrl: markerIcon2x,
+  shadowUrl: markerShadow,
+});
+
+// Custom icons for different marker types
+const toiletIcon = new L.Icon({
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
+  shadowUrl: markerShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
+const binIcon = new L.Icon({
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+  shadowUrl: markerShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
+const hotspotIcon = new L.Icon({
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+  shadowUrl: markerShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
+// Heatmap layer component
+const HeatmapLayer = ({ points, enabled }: { points: [number, number, number][]; enabled: boolean }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!enabled) return;
+
+    // @ts-expect-error leaflet.heat types not available
+    const heat = L.heatLayer(points, {
+      radius: 25,
+      blur: 15,
+      maxZoom: 17,
+      gradient: { 0.4: "blue", 0.6: "cyan", 0.7: "lime", 0.8: "yellow", 1: "red" },
+    }).addTo(map);
+
+    return () => {
+      map.removeLayer(heat);
+    };
+  }, [map, points, enabled]);
+
+  return null;
+};
+
+// Map center component for flying to selected marker
+const MapController = ({ center }: { center: [number, number] | null }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (center) {
+      map.flyTo(center, 16, { duration: 0.5 });
+    }
+  }, [map, center]);
+
+  return null;
+};
+
+// Custom Pan Control Component
+const PanControl = () => {
+  const map = useMap();
+  const [container, setContainer] = useState<HTMLElement | null>(null);
+  const [isPanActive, setIsPanActive] = useState(true);
+
+  useEffect(() => {
+    // Find the zoom control container and create our custom control below it
+    const zoomControl = document.querySelector('.leaflet-control-zoom');
+    if (zoomControl && zoomControl.parentElement) {
+      const customControl = document.createElement('div');
+      customControl.className = 'leaflet-control leaflet-bar custom-pan-control';
+      customControl.style.marginTop = '10px';
+      zoomControl.parentElement.appendChild(customControl);
+      setContainer(customControl);
+
+      return () => {
+        customControl.remove();
+      };
+    }
+  }, []);
+
+  const handlePanMode = () => {
+    if (isPanActive) {
+      map.dragging.disable();
+      map.getContainer().style.cursor = 'default';
+      setIsPanActive(false);
+    } else {
+      map.dragging.enable();
+      map.getContainer().style.cursor = 'grab';
+      setIsPanActive(true);
+    }
+  };
+
+  const handleRecenter = () => {
+    map.flyTo([9.9195, 78.1193], 14, { duration: 0.5 });
+  };
+
+  if (!container) return null;
+
+  return createPortal(
+    <>
+      <button
+        onClick={handlePanMode}
+        className="leaflet-custom-button"
+        title={isPanActive ? "Disable Pan Mode" : "Enable Pan Mode - Drag to move map"}
+        style={{
+          width: '40px',
+          height: '40px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: isPanActive ? '#e8f5e9' : 'white',
+          border: 'none',
+          borderBottom: '1px solid #e0e0e0',
+          cursor: 'pointer',
+          borderRadius: '8px 8px 0 0',
+        }}
+      >
+        <Hand size={20} color={isPanActive ? '#2e7d32' : '#333'} />
+      </button>
+      <button
+        onClick={handleRecenter}
+        className="leaflet-custom-button"
+        title="Recenter Map"
+        style={{
+          width: '40px',
+          height: '40px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'white',
+          border: 'none',
+          cursor: 'pointer',
+          borderRadius: '0 0 8px 8px',
+        }}
+      >
+        <Crosshair size={20} color="#333" />
+      </button>
+    </>,
+    container
+  );
+};
 
 const fillColor: Record<string, string> = { Low: "bg-primary", Medium: "bg-accent", Full: "bg-destructive" };
 const severityColor: Record<string, string> = { Low: "bg-primary", Medium: "bg-accent", High: "bg-destructive" };
@@ -15,11 +178,30 @@ const UserSmartMap = () => {
     type: string;
     data: typeof mockToilets[0] | typeof mockBins[0] | typeof mockHotspots[0];
   } | null>(null);
+  const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
+
+  // Madurai center coordinates
+  const maduraiCenter: [number, number] = [9.9195, 78.1193];
+
+  // Heatmap data from hotspots
+  const heatmapData: [number, number, number][] = mockHotspots.map((h) => [
+    h.lat,
+    h.lng,
+    h.severity === "High" ? 1 : h.severity === "Medium" ? 0.6 : 0.3,
+  ]);
+
+  const handleMarkerSelect = (
+    type: string,
+    data: typeof mockToilets[0] | typeof mockBins[0] | typeof mockHotspots[0]
+  ) => {
+    setSelectedMarker({ type, data });
+    setMapCenter([data.lat, data.lng]);
+  };
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] flex-col lg:flex-row">
+    <div className="flex h-full w-full flex-col lg:flex-row overflow-hidden">
       {/* Left Panel - Filters */}
-      <aside className="w-full shrink-0 overflow-y-auto border-b bg-background p-4 lg:w-80 lg:border-b-0 lg:border-r">
+      <aside className="w-full shrink-0 overflow-y-auto border-b bg-background p-4 lg:w-80 lg:border-b-0 lg:border-r lg:h-full max-h-[30vh] lg:max-h-full">
         <h2 className="mb-4 text-lg font-bold text-foreground">Civic Filters</h2>
 
         <Accordion type="multiple" defaultValue={["toilets"]} className="space-y-1">
@@ -35,7 +217,7 @@ const UserSmartMap = () => {
                   <Card
                     key={t.id}
                     className="cursor-pointer p-3 transition-colors hover:bg-muted/30"
-                    onClick={() => setSelectedMarker({ type: "toilet", data: t })}
+                    onClick={() => handleMarkerSelect("toilet", t)}
                   >
                     <div className="flex items-start justify-between">
                       <p className="text-sm font-medium">{t.name}</p>
@@ -69,7 +251,7 @@ const UserSmartMap = () => {
                   <Card
                     key={b.id}
                     className="cursor-pointer p-3 transition-colors hover:bg-muted/30"
-                    onClick={() => setSelectedMarker({ type: "bin", data: b })}
+                    onClick={() => handleMarkerSelect("bin", b)}
                   >
                     <p className="text-sm font-medium">{b.name}</p>
                     <div className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
@@ -100,7 +282,7 @@ const UserSmartMap = () => {
                   <Card
                     key={h.id}
                     className="cursor-pointer p-3 transition-colors hover:bg-muted/30"
-                    onClick={() => setSelectedMarker({ type: "hotspot", data: h })}
+                    onClick={() => handleMarkerSelect("hotspot", h)}
                   >
                     <div className="flex items-start justify-between">
                       <p className="text-sm font-medium">{h.name}</p>
@@ -144,23 +326,83 @@ const UserSmartMap = () => {
       </aside>
 
       {/* Map Area */}
-      <main className="relative flex flex-1 items-center justify-center bg-muted/20">
-        {/* Placeholder for Google Maps */}
-        <div className="flex flex-col items-center gap-4 p-8 text-center">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-            <MapPin className="h-10 w-10 text-primary" />
-          </div>
-          <h3 className="text-xl font-semibold text-foreground">Google Maps Integration</h3>
-          <p className="max-w-md text-sm text-muted-foreground">
-            Interactive map will display here with markers for toilets, bins, and hotspots.
-            {heatmap && " Heatmap overlay is enabled."}
-          </p>
-          <div className="flex flex-wrap justify-center gap-2">
-            <Badge>4 Toilets</Badge>
-            <Badge variant="secondary">4 Bins</Badge>
-            <Badge variant="outline">3 Hotspots</Badge>
-          </div>
-        </div>
+      <main className="relative flex flex-1 flex-col bg-muted/20 min-h-0">
+        <MapContainer
+          center={maduraiCenter}
+          zoom={14}
+          className="h-full w-full"
+          style={{ flex: 1, minHeight: 0 }}
+          scrollWheelZoom={true}
+          dragging={true}
+          touchZoom={true}
+          doubleClickZoom={true}
+          zoomControl={false}
+        >
+          <ZoomControl position="bottomright" />
+          <PanControl />
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+
+          <MapController center={mapCenter} />
+          <HeatmapLayer points={heatmapData} enabled={heatmap} />
+
+          {/* Toilet Markers */}
+          {mockToilets.map((t) => (
+            <Marker
+              key={`toilet-${t.id}`}
+              position={[t.lat, t.lng]}
+              icon={toiletIcon}
+              eventHandlers={{ click: () => handleMarkerSelect("toilet", t) }}
+            >
+              <Popup>
+                <div className="min-w-[180px]">
+                  <h4 className="font-semibold">{t.name}</h4>
+                  <p className="text-sm">Rating: {t.rating} ⭐</p>
+                  <p className="text-sm">Status: {t.open ? "Open" : "Closed"}</p>
+                  <p className="text-sm">Cleanliness: {t.cleanliness}</p>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+
+          {/* Bin Markers */}
+          {mockBins.map((b) => (
+            <Marker
+              key={`bin-${b.id}`}
+              position={[b.lat, b.lng]}
+              icon={binIcon}
+              eventHandlers={{ click: () => handleMarkerSelect("bin", b) }}
+            >
+              <Popup>
+                <div className="min-w-[180px]">
+                  <h4 className="font-semibold">{b.name}</h4>
+                  <p className="text-sm">Fill Level: {b.fill}</p>
+                  <p className="text-sm">{b.smart ? "Smart IoT Bin" : "Standard Bin"}</p>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+
+          {/* Hotspot Markers */}
+          {mockHotspots.map((h) => (
+            <Marker
+              key={`hotspot-${h.id}`}
+              position={[h.lat, h.lng]}
+              icon={hotspotIcon}
+              eventHandlers={{ click: () => handleMarkerSelect("hotspot", h) }}
+            >
+              <Popup>
+                <div className="min-w-[180px]">
+                  <h4 className="font-semibold">{h.name}</h4>
+                  <p className="text-sm">Severity: {h.severity}</p>
+                  <p className="text-sm">{h.reports} reports</p>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
 
         {/* Selected Marker Popup */}
         {selectedMarker && (
