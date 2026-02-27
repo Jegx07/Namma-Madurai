@@ -1,4 +1,14 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  updateProfile,
+  User as FirebaseUser,
+} from "firebase/auth";
+import { auth, googleProvider } from "../../firebase";
 
 export type UserRole = "citizen" | "admin" | null;
 
@@ -39,81 +49,70 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // Check for existing session
-    const savedUser = localStorage.getItem("namma_madurai_user");
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-    setIsLoading(false);
-  }, []);
-
-  const saveUser = (userData: User) => {
-    setUser(userData);
-    localStorage.setItem("namma_madurai_user", JSON.stringify(userData));
+  const mapFirebaseUser = (firebaseUser: FirebaseUser): User => {
+    const savedRole = localStorage.getItem(`namma_madurai_role_${firebaseUser.uid}`);
+    return {
+      id: firebaseUser.uid,
+      name: firebaseUser.displayName || firebaseUser.email?.split("@")[0] || "User",
+      email: firebaseUser.email || "",
+      avatar: firebaseUser.displayName?.substring(0, 2).toUpperCase() || 
+              firebaseUser.email?.substring(0, 2).toUpperCase() || "U",
+      role: savedRole as UserRole,
+    };
   };
 
-  const login = async (email: string, _password: string) => {
+  useEffect(() => {
+    // Listen to Firebase auth state changes
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser(mapFirebaseUser(firebaseUser));
+      } else {
+        setUser(null);
+      }
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const login = async (email: string, password: string) => {
     setIsLoading(true);
-    // Simulate API call - In production, use Firebase Auth
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    const userData: User = {
-      id: crypto.randomUUID(),
-      name: email.split("@")[0],
-      email,
-      avatar: email.substring(0, 2).toUpperCase(),
-      role: null, // Will be set during role selection
-    };
-    
-    saveUser(userData);
-    setIsLoading(false);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const loginWithGoogle = async () => {
     setIsLoading(true);
-    // Simulate Google Sign-In - In production, use Firebase Auth with Google provider
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    const userData: User = {
-      id: crypto.randomUUID(),
-      name: "Demo User",
-      email: "demo@nammamadurai.in",
-      avatar: "DU",
-      role: null,
-    };
-    
-    saveUser(userData);
-    setIsLoading(false);
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const signup = async (name: string, email: string, _password: string) => {
+  const signup = async (name: string, email: string, password: string) => {
     setIsLoading(true);
-    // Simulate API call - In production, use Firebase Auth
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    const userData: User = {
-      id: crypto.randomUUID(),
-      name,
-      email,
-      avatar: name.substring(0, 2).toUpperCase(),
-      role: null,
-    };
-    
-    saveUser(userData);
-    setIsLoading(false);
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(result.user, { displayName: name });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const selectRole = (role: UserRole) => {
     if (user) {
-      const updatedUser = { ...user, role };
-      saveUser(updatedUser);
+      localStorage.setItem(`namma_madurai_role_${user.id}`, role || "");
+      setUser({ ...user, role });
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await signOut(auth);
     setUser(null);
-    localStorage.removeItem("namma_madurai_user");
   };
 
   return (
