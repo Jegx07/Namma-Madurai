@@ -17,7 +17,10 @@ import {
   Building2,
   Award,
   Shield,
-  ChevronDown
+  ChevronDown,
+  TrendingUp,
+  ArrowLeftRight,
+  Activity
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import ChatAssistant from "@/components/ChatAssistant";
@@ -40,12 +43,20 @@ const youthNavItems = [
   { label: "Admin Oversight", path: "/user/youth/admin", icon: Shield },
 ];
 
+const criNavItems = [
+  { label: "CRI Overview", path: "/user/cri/overview", icon: Activity },
+  { label: "Ward Rankings", path: "/user/cri/rankings", icon: Trophy },
+  { label: "Trend Analytics", path: "/user/cri/trends", icon: TrendingUp },
+  { label: "Ward Comparison", path: "/user/cri/compare", icon: ArrowLeftRight },
+];
+
 const UserLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout, isAuthenticated } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [youthOpen, setYouthOpen] = useState(location.pathname.includes('/youth'));
+  const [criOpen, setCriOpen] = useState(location.pathname.includes('/cri'));
 
   // Hide chat assistant on map page
   const isMapPage = location.pathname === "/user/map";
@@ -142,6 +153,44 @@ const UserLayout = () => {
                 {youthOpen && (
                   <div className="mt-1 ml-4 space-y-0.5">
                     {youthNavItems.map((item) => (
+                      <NavLink
+                        key={item.path}
+                        to={item.path}
+                        onClick={() => setSidebarOpen(false)}
+                        className={({ isActive }) =>
+                          `flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all ${isActive
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                          }`
+                        }
+                      >
+                        <item.icon className="h-4 w-4" />
+                        {item.label}
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Civic Reputation Section */}
+              <div className="pt-3 mt-3 border-t border-gray-100">
+                <button
+                  onClick={() => setCriOpen(!criOpen)}
+                  className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold transition-all ${
+                    location.pathname.includes('/cri')
+                      ? 'bg-emerald-50 text-emerald-700'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Activity className={`h-5 w-5 ${location.pathname.includes('/cri') ? 'text-emerald-600' : 'text-gray-400'}`} />
+                    Civic Reputation
+                  </div>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${criOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {criOpen && (
+                  <div className="mt-1 ml-4 space-y-0.5">
+                    {criNavItems.map((item) => (
                       <NavLink
                         key={item.path}
                         to={item.path}

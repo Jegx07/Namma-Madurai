@@ -33,6 +33,12 @@ import YouthLeaderboard from "./pages/youth/YouthLeaderboard";
 import YouthAwards from "./pages/youth/YouthAwards";
 import YouthAdminPanel from "./pages/youth/YouthAdminPanel";
 
+// CRI pages
+import CRIOverview from "./pages/cri/CRIOverview";
+import WardRankings from "./pages/cri/WardRankings";
+import TrendAnalytics from "./pages/cri/TrendAnalytics";
+import WardComparison from "./pages/cri/WardComparison";
+
 // Admin pages
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminReports from "./pages/admin/AdminReports";
@@ -103,6 +109,11 @@ const AppRoutes = () => {
         <Route path="youth/leaderboard" element={<YouthLeaderboard />} />
         <Route path="youth/awards" element={<YouthAwards />} />
         <Route path="youth/admin" element={<YouthAdminPanel />} />
+        {/* CRI routes */}
+        <Route path="cri/overview" element={<CRIOverview />} />
+        <Route path="cri/rankings" element={<WardRankings />} />
+        <Route path="cri/trends" element={<TrendAnalytics />} />
+        <Route path="cri/compare" element={<WardComparison />} />
       </Route>
 
       {/* Admin routes */}
