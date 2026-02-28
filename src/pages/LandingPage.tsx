@@ -7,14 +7,14 @@ const LandingPage = () => {
   return (
     <div className="flex min-h-screen flex-col">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 border-b border-white/10 bg-black/40 backdrop-blur-md">
-        <div className="container mx-auto px-4 flex h-20 items-center justify-between">
+      <header className="fixed top-0 w-full z-50 bg-transparent">
+        <div className="container mx-auto px-4 flex h-20 items-center justify-between py-2">
           {/* Left: Logo */}
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
-              <MapPin className="h-5 w-5 text-white" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+              <img src="/2.png" alt="Logo" className="h-8 w-8 object-contain drop-shadow-md" />
             </div>
-            <span className="text-xl font-bold tracking-wide text-white">Namma Madurai</span>
+            <span className="text-xl font-bold tracking-wide text-white">NAMMA MADURAI</span>
           </div>
 
           {/* Right: Auth buttons */}
@@ -120,7 +120,7 @@ const LandingPage = () => {
         {/* Subtle top glow */}
         <div className="absolute top-0 left-1/2 h-[1px] w-1/2 -translate-x-1/2 bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent"></div>
         <div className="container relative z-10 flex flex-col items-center gap-6 py-12 text-center text-sm text-zinc-500 md:flex-row md:justify-between">
-          <p>© 2026 Namma Madurai – Smart Civic Intelligence Platform</p>
+          <p>© 2026 NAMMA MADURAI – Smart Civic Intelligence Platform</p>
           <div className="flex flex-wrap items-center justify-center gap-6">
             <Link to="/architecture" className="hover:text-emerald-400 transition-colors">
               Architecture

@@ -88,10 +88,10 @@ const UserLayout = () => {
         <div className="flex h-full flex-col">
           {/* Logo */}
           <div className="flex h-16 items-center gap-3 border-b border-gray-100 px-5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
-              <MapPin className="h-4 w-4" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 backdrop-blur-md shadow-sm">
+              <img src="/2.png" alt="Logo" className="h-7 w-7 object-contain drop-shadow-sm" />
             </div>
-            <span className="text-lg font-bold text-gray-900 tracking-tight">Namma Madurai</span>
+            <span className="text-lg font-bold text-gray-900 tracking-tight">NAMMA MADURAI</span>
             <Button
               variant="ghost"
               size="icon"
@@ -194,10 +194,10 @@ const UserLayout = () => {
         <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-gray-200 bg-white/95 backdrop-blur px-4 lg:px-6 shadow-sm">
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
-                <MapPin className="h-4 w-4" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 backdrop-blur-md shadow-sm">
+                <img src="/2.png" alt="Logo" className="h-7 w-7 object-contain drop-shadow-sm" />
               </div>
-              <span className="font-bold text-gray-900 tracking-tight text-lg">Namma Madurai</span>
+              <span className="font-bold text-gray-900 tracking-tight text-lg">NAMMA MADURAI</span>
             </div>
           </div>
 

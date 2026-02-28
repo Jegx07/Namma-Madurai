@@ -121,17 +121,16 @@ const SelectRole = () => {
       {/* ═══ Main Content ═══ */}
       <div className="relative z-10 flex w-full max-w-3xl flex-col items-center">
 
-        {/* Namma Madurai Badge */}
+        {/* NAMMA MADURAI Badge */}
         <div className="mb-6">
           <div className="relative overflow-hidden rounded-xl px-10 py-3 shadow-[0_0_30px_rgba(34,197,94,0.15)]"
             style={{ background: 'linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(6,182,212,0.08) 100%)', border: '1px solid rgba(34,197,94,0.3)', backdropFilter: 'blur(20px)' }}
           >
             <div className="flex items-center gap-2.5">
-              <div className="flex items-center justify-center rounded-full p-1.5"
-                style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.4)' }}>
-                <MapPin className="h-4 w-4 text-emerald-400" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md shadow-sm">
+                <img src="/2.png" alt="Logo" className="h-6 w-6 object-contain drop-shadow-md" />
               </div>
-              <span className="font-semibold tracking-wider text-white/90 text-sm uppercase">Namma Madurai</span>
+              <span className="font-semibold tracking-wider text-white/90 text-sm uppercase">NAMMA MADURAI</span>
             </div>
           </div>
         </div>

@@ -116,7 +116,7 @@ const getOfflineResponse = (userText: string): { text: string; buttons?: string[
   // About
   if (q.includes("who") || q.includes("what are you") || q.includes("about")) {
     return {
-      text: `I'm the Clean Madurai Assistant 🌿 — a chatbot built to help citizens of Madurai with sanitation, waste management, and cleanliness information.\n\nI'm part of the Namma Madurai initiative to make our beloved city cleaner, greener, and healthier!`,
+      text: `I'm the Clean Madurai Assistant 🌿 — a chatbot built to help citizens of Madurai with sanitation, waste management, and cleanliness information.\n\nI'm part of the NAMMA MADURAI initiative to make our beloved city cleaner, greener, and healthier!`,
       buttons: TOPIC_BUTTONS,
     };
   }
@@ -191,7 +191,7 @@ const ChatAssistant = () => {
         const requestBody = {
           systemInstruction: {
             parts: [{
-              text: "You are a helpful assistant for Namma Madurai / Clean Madurai. You answer questions about nearest toilets, waste segregation, compost centers, e-waste disposal, plastic ban, water supply, and reporting complaints. Keep answers concise, helpful, and friendly. Speak natively like a Madurai local where appropriate. Use emojis to make the conversation lively."
+              text: "You are a helpful assistant for NAMMA MADURAI / Clean Madurai. You answer questions about nearest toilets, waste segregation, compost centers, e-waste disposal, plastic ban, water supply, and reporting complaints. Keep answers concise, helpful, and friendly. Speak natively like a Madurai local where appropriate. Use emojis to make the conversation lively."
             }]
           },
           contents: formattedMessages,

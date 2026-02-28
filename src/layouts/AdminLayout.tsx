@@ -64,12 +64,12 @@ const AdminLayout = () => {
         <div className="flex h-full flex-col">
           {/* Logo */}
           <div className="flex h-16 items-center gap-3 border-b border-white/10 px-4 bg-black/20">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/20 border border-primary/30 shadow-[0_0_10px_rgba(74,222,128,0.2)]">
-              <Shield className="h-5 w-5 text-primary drop-shadow-[0_0_5px_rgba(74,222,128,0.8)]" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+              <img src="/2.png" alt="Logo" className="h-8 w-8 object-contain drop-shadow-md" />
             </div>
             <div>
-              <span className="text-lg font-bold text-white tracking-widest uppercase text-sm drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]">Command</span>
-              <p className="text-[10px] text-primary tracking-[0.2em] font-mono">MADURAI.SYS</p>
+              <span className="text-lg font-bold text-white tracking-widest uppercase text-sm drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]">NAMMA MADURAI</span>
+              <p className="text-[10px] text-primary tracking-[0.2em] font-mono">ADMIN.SYS</p>
             </div>
             <Button
               variant="ghost"
@@ -137,8 +137,10 @@ const AdminLayout = () => {
             <Menu className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-primary drop-shadow-[0_0_5px_rgba(74,222,128,0.5)]" />
-            <span className="font-bold tracking-widest text-sm uppercase text-white shadow-sm">Command</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md shadow-sm">
+              <img src="/2.png" alt="Logo" className="h-6 w-6 object-contain drop-shadow-sm" />
+            </div>
+            <span className="font-bold tracking-widest text-sm uppercase text-white shadow-sm">NAMMA MADURAI</span>
           </div>
         </header>
 
