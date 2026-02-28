@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, X, Send, Loader2 } from "lucide-react";
+import { MessageCircle, X, Send, Loader2, Image as ImageIcon, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -7,7 +7,10 @@ type Msg = {
   role: "user" | "assistant";
   content: string;
   buttons?: string[];
+  imageUrl?: string;
 };
+
+const VISION_API_URL = "http://localhost:5000/analyze/full";
 
 const TOPIC_BUTTONS = [
   "♻️ Waste Segregation",
@@ -139,7 +142,93 @@ const ChatAssistant = () => {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size should be less than 5MB');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setImagePreview(base64);
+        // Extract just the base64 data without the data URL prefix
+        const base64Data = base64.split(',')[1];
+        setSelectedImage(base64Data);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const clearImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const analyzeImageWithVision = async (base64Image: string): Promise<string> => {
+    try {
+      const response = await fetch(VISION_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: base64Image })
+      });
+
+      if (!response.ok) {
+        throw new Error('Vision API request failed');
+      }
+
+      const data = await response.json();
+
+      // Format the response for the chat
+      let analysisText = "📸 **Image Analysis Results:**\n\n";
+
+      if (data.summary) {
+        analysisText += `${data.summary}\n\n`;
+      }
+
+      if (data.labels && data.labels.length > 0) {
+        const topLabels = data.labels.slice(0, 8).map((l: { description: string, score: number }) =>
+          `• ${l.description} (${Math.round(l.score * 100)}%)`
+        ).join('\n');
+        analysisText += `**Labels detected:**\n${topLabels}\n\n`;
+      }
+
+      if (data.objects && data.objects.length > 0) {
+        const topObjects = data.objects.slice(0, 5).map((o: { name: string, score: number }) =>
+          `• ${o.name} (${Math.round(o.score * 100)}%)`
+        ).join('\n');
+        analysisText += `**Objects found:**\n${topObjects}\n\n`;
+      }
+
+      if (data.wasteDetected && data.wasteDetected.length > 0) {
+        analysisText += `♻️ **Waste items detected:** ${data.wasteDetected.join(', ')}\n`;
+        analysisText += "Please ensure proper segregation and disposal!\n\n";
+      }
+
+      analysisText += "💡 You can ask me questions about the items in this image or how to dispose of them properly!";
+
+      return analysisText;
+    } catch (error) {
+      console.error('Vision API Error:', error);
+      return "⚠️ Sorry, I couldn't analyze the image. The Vision API server might not be running.\n\nPlease make sure the server is running on port 5000.\nRun: `node server.js`";
+    }
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -149,13 +238,32 @@ const ChatAssistant = () => {
 
   const handleSend = async (text?: string) => {
     const msgText = text || input.trim();
-    if (!msgText || isLoading) return;
+    const hasImage = !!selectedImage;
 
-    const userMsg: Msg = { role: "user", content: msgText };
+    if ((!msgText && !hasImage) || isLoading) return;
+
+    const userMsg: Msg = {
+      role: "user",
+      content: hasImage ? (msgText || "📷 Analyze this image") : msgText,
+      imageUrl: imagePreview || undefined
+    };
     const allMsgs = [...messages, userMsg];
     setMessages(allMsgs);
     setInput("");
+
+    // Clear the image after sending
+    const imageToAnalyze = selectedImage;
+    clearImage();
+
     setIsLoading(true);
+
+    // If there's an image, analyze it first
+    if (hasImage && imageToAnalyze) {
+      const analysisResult = await analyzeImageWithVision(imageToAnalyze);
+      setMessages(prev => [...prev, { role: "assistant", content: analysisResult }]);
+      setIsLoading(false);
+      return;
+    }
 
     const addAssistantMsg = (content: string, buttons?: string[]) => {
       setMessages((prev) => [
@@ -337,6 +445,13 @@ const ChatAssistant = () => {
                       : "bg-white/80 backdrop-blur-sm text-foreground border border-[#d8e4da]"
                       }`}
                   >
+                    {msg.imageUrl && (
+                      <img
+                        src={msg.imageUrl}
+                        alt="Uploaded"
+                        className="max-w-full max-h-40 rounded-md mb-2 object-cover"
+                      />
+                    )}
                     {msg.content}
                   </div>
                 </div>
@@ -367,18 +482,57 @@ const ChatAssistant = () => {
           </div>
 
           <div className="relative z-10 border-t bg-white/60 backdrop-blur-sm p-2">
+            {/* Image preview */}
+            {imagePreview && (
+              <div className="relative mb-2 inline-block">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="max-h-20 rounded-md border"
+                />
+                <button
+                  type="button"
+                  onClick={clearImage}
+                  className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-destructive/90"
+                >
+                  ×
+                </button>
+              </div>
+            )}
             <form
               onSubmit={(e) => { e.preventDefault(); handleSend(); }}
               className="flex gap-2"
             >
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImageSelect}
+                accept="image/*"
+                className="hidden"
+                id="chat-image-upload"
+              />
+              <Button
+                type="button"
+                size="icon"
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isLoading}
+                title="Upload image for analysis"
+              >
+                <Camera className="h-4 w-4" />
+              </Button>
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about waste, toilets..."
+                placeholder={imagePreview ? "Add message (optional)..." : "Ask about waste, toilets..."}
                 className="flex-1 text-sm bg-white/80"
                 disabled={isLoading}
               />
-              <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
+              <Button
+                type="submit"
+                size="icon"
+                disabled={isLoading || (!input.trim() && !selectedImage)}
+              >
                 <Send className="h-4 w-4" />
               </Button>
             </form>

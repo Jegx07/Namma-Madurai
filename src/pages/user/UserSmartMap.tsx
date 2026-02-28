@@ -426,6 +426,10 @@ const UserSmartMap = () => {
                     <span className="font-medium text-gray-500">Area</span>
                     <span className="font-semibold text-gray-900">{selectedMarker.data.area}</span>
                   </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-500">Lat / Lng</span>
+                    <span className="font-semibold text-gray-900">{selectedMarker.data.latitude.toFixed(4)}, {selectedMarker.data.longitude.toFixed(4)}</span>
+                  </div>
                   {selectedMarker.data.last_collected && (
                     <div className="flex justify-between items-center">
                       <span className="font-medium text-gray-500">Last Collected</span>
@@ -444,8 +448,12 @@ const UserSmartMap = () => {
                   <div className="flex justify-between items-center">
                     <span className="font-medium text-gray-500">Status</span>
                     <span className={`font-semibold capitalize ${severityColor[selectedMarker.data.status] || 'text-gray-900'}`}>
-                      {selectedMarker.data.status.replace("-", " ")}
+                      {selectedMarker.data.status?.replace("-", " ") || selectedMarker.data.status}
                     </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-gray-500">Lat / Lng</span>
+                    <span className="font-semibold text-gray-900">{selectedMarker.data.latitude?.toFixed(4) || 0}, {selectedMarker.data.longitude?.toFixed(4) || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="font-medium text-gray-500">Reported by</span>

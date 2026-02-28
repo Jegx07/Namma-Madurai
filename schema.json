@@ -1,0 +1,1219 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "",
+    "title": "standard public schema",
+    "version": "14.4"
+  },
+  "host": "vzizefrkiwewfibmenxg.supabase.co:443",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json",
+    "application/vnd.pgrst.object+json;nulls=stripped",
+    "application/vnd.pgrst.object+json",
+    "text/csv"
+  ],
+  "produces": [
+    "application/json",
+    "application/vnd.pgrst.object+json;nulls=stripped",
+    "application/vnd.pgrst.object+json",
+    "text/csv"
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "produces": [
+          "application/openapi+json",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "summary": "OpenAPI description (this document)",
+        "tags": [
+          "Introspection"
+        ]
+      }
+    },
+    "/User Dashboard": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.user_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.user_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.email"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.score"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.reports_submitted"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.updated_at"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/User Dashboard"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "User Dashboard"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.User Dashboard"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "User Dashboard"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.user_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.user_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.email"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.score"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.reports_submitted"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.updated_at"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "User Dashboard"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.user_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.user_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.email"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.score"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.reports_submitted"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.User Dashboard.updated_at"
+          },
+          {
+            "$ref": "#/parameters/body.User Dashboard"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "User Dashboard"
+        ]
+      }
+    },
+    "/Workers": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.Workers.name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Workers.email"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Workers.phone"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Workers.area"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Workers.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Workers.tasks_completed"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Workers.created_at"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/Workers"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "Workers"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.Workers"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "Workers"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.Workers.name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Workers.email"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Workers.phone"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Workers.area"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Workers.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Workers.tasks_completed"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Workers.created_at"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "Workers"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.Workers.name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Workers.email"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Workers.phone"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Workers.area"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Workers.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Workers.tasks_completed"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Workers.created_at"
+          },
+          {
+            "$ref": "#/parameters/body.Workers"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "Workers"
+        ]
+      }
+    },
+    "/Report 1": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.user_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.user_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.type"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.description"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.latitude"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.longitude"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.address"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.image_url"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.updated_at"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/Report 1"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "Report 1"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.Report 1"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "Report 1"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.user_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.user_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.type"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.description"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.latitude"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.longitude"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.address"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.image_url"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.updated_at"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "Report 1"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.user_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.user_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.type"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.description"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.latitude"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.longitude"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.address"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.image_url"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Report 1.updated_at"
+          },
+          {
+            "$ref": "#/parameters/body.Report 1"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "Report 1"
+        ]
+      }
+    },
+    "/Bin Data": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.Bin_ID"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.latitude"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.longitude"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.fill_level"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.last_collected"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.area"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.created_at"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/Bin Data"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "Bin Data"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.Bin Data"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "Bin Data"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.Bin_ID"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.latitude"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.longitude"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.fill_level"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.last_collected"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.area"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.created_at"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "Bin Data"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.Bin_ID"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.latitude"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.longitude"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.fill_level"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.last_collected"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.area"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.Bin Data.created_at"
+          },
+          {
+            "$ref": "#/parameters/body.Bin Data"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "Bin Data"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "User Dashboard": {
+      "required": [
+        "user_id"
+      ],
+      "properties": {
+        "user_id": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "text",
+          "type": "string"
+        },
+        "user_name": {
+          "format": "text",
+          "type": "string"
+        },
+        "email": {
+          "format": "text",
+          "type": "string"
+        },
+        "score": {
+          "format": "bigint",
+          "type": "integer"
+        },
+        "reports_submitted": {
+          "format": "bigint",
+          "type": "integer"
+        },
+        "created_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Workers": {
+      "required": [
+        "name",
+        "email"
+      ],
+      "properties": {
+        "name": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "text",
+          "type": "string"
+        },
+        "email": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "text",
+          "type": "string"
+        },
+        "phone": {
+          "format": "bigint",
+          "type": "integer"
+        },
+        "area": {
+          "format": "text",
+          "type": "string"
+        },
+        "status": {
+          "format": "text",
+          "type": "string"
+        },
+        "tasks_completed": {
+          "format": "bigint",
+          "type": "integer"
+        },
+        "created_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Report 1": {
+      "required": [
+        "user_id"
+      ],
+      "properties": {
+        "user_id": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "text",
+          "type": "string"
+        },
+        "user_name": {
+          "format": "text",
+          "type": "string"
+        },
+        "type": {
+          "format": "text",
+          "type": "string"
+        },
+        "description": {
+          "format": "text",
+          "type": "string"
+        },
+        "latitude": {
+          "format": "double precision",
+          "type": "number"
+        },
+        "longitude": {
+          "format": "double precision",
+          "type": "number"
+        },
+        "address": {
+          "format": "text",
+          "type": "string"
+        },
+        "status": {
+          "format": "text",
+          "type": "string"
+        },
+        "image_url": {
+          "format": "text",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Bin Data": {
+      "required": [
+        "Bin_ID"
+      ],
+      "properties": {
+        "Bin_ID": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "text",
+          "type": "string"
+        },
+        "latitude": {
+          "format": "double precision",
+          "type": "number"
+        },
+        "longitude": {
+          "format": "double precision",
+          "type": "number"
+        },
+        "fill_level": {
+          "format": "text",
+          "type": "string"
+        },
+        "last_collected": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "area": {
+          "format": "text",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "parameters": {
+    "preferParams": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "in": "header",
+      "type": "string"
+    },
+    "preferReturn": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "enum": [
+        "return=representation",
+        "return=minimal",
+        "return=none"
+      ],
+      "in": "header",
+      "type": "string"
+    },
+    "preferCount": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "enum": [
+        "count=none"
+      ],
+      "in": "header",
+      "type": "string"
+    },
+    "preferPost": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "enum": [
+        "return=representation",
+        "return=minimal",
+        "return=none",
+        "resolution=ignore-duplicates",
+        "resolution=merge-duplicates"
+      ],
+      "in": "header",
+      "type": "string"
+    },
+    "select": {
+      "name": "select",
+      "description": "Filtering Columns",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "on_conflict": {
+      "name": "on_conflict",
+      "description": "On Conflict",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "order": {
+      "name": "order",
+      "description": "Ordering",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "range": {
+      "name": "Range",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "in": "header",
+      "type": "string"
+    },
+    "rangeUnit": {
+      "name": "Range-Unit",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "default": "items",
+      "in": "header",
+      "type": "string"
+    },
+    "offset": {
+      "name": "offset",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "limit": {
+      "name": "limit",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.User Dashboard": {
+      "name": "User Dashboard",
+      "description": "User Dashboard",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/User Dashboard"
+      }
+    },
+    "rowFilter.User Dashboard.user_id": {
+      "name": "user_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.User Dashboard.user_name": {
+      "name": "user_name",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.User Dashboard.email": {
+      "name": "email",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.User Dashboard.score": {
+      "name": "score",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.User Dashboard.reports_submitted": {
+      "name": "reports_submitted",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.User Dashboard.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.User Dashboard.updated_at": {
+      "name": "updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.Workers": {
+      "name": "Workers",
+      "description": "Workers",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/Workers"
+      }
+    },
+    "rowFilter.Workers.name": {
+      "name": "name",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Workers.email": {
+      "name": "email",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Workers.phone": {
+      "name": "phone",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Workers.area": {
+      "name": "area",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Workers.status": {
+      "name": "status",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Workers.tasks_completed": {
+      "name": "tasks_completed",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Workers.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.Report 1": {
+      "name": "Report 1",
+      "description": "Report 1",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/Report 1"
+      }
+    },
+    "rowFilter.Report 1.user_id": {
+      "name": "user_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Report 1.user_name": {
+      "name": "user_name",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Report 1.type": {
+      "name": "type",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Report 1.description": {
+      "name": "description",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Report 1.latitude": {
+      "name": "latitude",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Report 1.longitude": {
+      "name": "longitude",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Report 1.address": {
+      "name": "address",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Report 1.status": {
+      "name": "status",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Report 1.image_url": {
+      "name": "image_url",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Report 1.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Report 1.updated_at": {
+      "name": "updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.Bin Data": {
+      "name": "Bin Data",
+      "description": "Bin Data",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/Bin Data"
+      }
+    },
+    "rowFilter.Bin Data.Bin_ID": {
+      "name": "Bin_ID",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Bin Data.latitude": {
+      "name": "latitude",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Bin Data.longitude": {
+      "name": "longitude",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Bin Data.fill_level": {
+      "name": "fill_level",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Bin Data.last_collected": {
+      "name": "last_collected",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Bin Data.area": {
+      "name": "area",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.Bin Data.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    }
+  },
+  "externalDocs": {
+    "description": "PostgREST Documentation",
+    "url": "https://postgrest.org/en/v14/references/api.html"
+  }
+}

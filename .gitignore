@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Secrets and outputs
+vision-key.json
+out*.txt
+out.txt

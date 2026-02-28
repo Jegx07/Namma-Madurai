@@ -77,17 +77,34 @@ export interface Database {
 // Reports
 export const supabaseReports = {
   async getAll() {
-    const { data, error } = await supabase
-      .from('reports')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await supabase
+        .from('Report 1')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error("Error fetching 'Report 1':", error);
+        throw error;
+      }
+
+      console.log("Fetched 'Report 1' Data:", data);
+
+      // Parse coordinates as numbers for map rendering
+      return data?.map(report => ({
+        ...report,
+        latitude: parseFloat(report.latitude as unknown as string) || 0,
+        longitude: parseFloat(report.longitude as unknown as string) || 0
+      })) || [];
+    } catch (error) {
+      console.error("Exception in supabaseReports.getAll:", error);
+      return [];
+    }
   },
 
   async getById(id: string) {
     const { data, error } = await supabase
-      .from('reports')
+      .from('Report 1')
       .select('*')
       .eq('id', id)
       .single();
@@ -97,7 +114,7 @@ export const supabaseReports = {
 
   async create(report: Database['public']['Tables']['reports']['Insert']) {
     const { data, error } = await supabase
-      .from('reports')
+      .from('Report 1')
       .insert(report)
       .select()
       .single();
@@ -107,7 +124,7 @@ export const supabaseReports = {
 
   async updateStatus(id: string, status: 'pending' | 'in-progress' | 'resolved') {
     const { data, error } = await supabase
-      .from('reports')
+      .from('Report 1')
       .update({ status, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
@@ -118,7 +135,7 @@ export const supabaseReports = {
 
   async delete(id: string) {
     const { error } = await supabase
-      .from('reports')
+      .from('Report 1')
       .delete()
       .eq('id', id);
     if (error) throw error;
@@ -128,7 +145,7 @@ export const supabaseReports = {
   subscribeToChanges(callback: (payload: any) => void) {
     return supabase
       .channel('reports-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'reports' }, callback)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'Report 1' }, callback)
       .subscribe();
   },
 };
@@ -136,18 +153,29 @@ export const supabaseReports = {
 // User Scores / Leaderboard
 export const supabaseUserScores = {
   async getLeaderboard(limit = 10) {
-    const { data, error } = await supabase
-      .from('user_scores')
-      .select('*')
-      .order('score', { ascending: false })
-      .limit(limit);
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await supabase
+        .from('User Dashboard')
+        .select('*')
+        .order('score', { ascending: false })
+        .limit(limit);
+
+      if (error) {
+        console.error("Error fetching 'User Dashboard' leaderboard:", error);
+        throw error;
+      }
+
+      console.log("Fetched 'User Dashboard' Leaderboard:", data);
+      return data || [];
+    } catch (error) {
+      console.error("Exception in supabaseUserScores.getLeaderboard:", error);
+      return [];
+    }
   },
 
   async getUserScore(userId: string) {
     const { data, error } = await supabase
-      .from('user_scores')
+      .from('User Dashboard')
       .select('*')
       .eq('user_id', userId)
       .single();
@@ -157,10 +185,10 @@ export const supabaseUserScores = {
 
   async upsertScore(userId: string, userName: string, email: string, additionalPoints = 10) {
     const existing = await this.getUserScore(userId);
-    
+
     if (existing) {
       const { data, error } = await supabase
-        .from('user_scores')
+        .from('User Dashboard')
         .update({
           score: existing.score + additionalPoints,
           reports_submitted: existing.reports_submitted + 1,
@@ -173,7 +201,7 @@ export const supabaseUserScores = {
       return data;
     } else {
       const { data, error } = await supabase
-        .from('user_scores')
+        .from('User Dashboard')
         .insert({
           user_id: userId,
           user_name: userName,
@@ -192,7 +220,7 @@ export const supabaseUserScores = {
   subscribeToChanges(callback: (payload: any) => void) {
     return supabase
       .channel('user-scores-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_scores' }, callback)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'User Dashboard' }, callback)
       .subscribe();
   },
 };
@@ -200,18 +228,36 @@ export const supabaseUserScores = {
 // Bins
 export const supabaseBins = {
   async getAll() {
-    const { data, error } = await supabase
-      .from('bins')
-      .select('*');
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await supabase
+        .from('Bin Data')
+        .select('*');
+
+      if (error) {
+        console.error("Error fetching 'Bin Data':", error);
+        throw error;
+      }
+
+      console.log("Fetched 'Bin Data':", data);
+
+      // Map Bin_ID to id and parse coordinates as numbers
+      return data?.map(bin => ({
+        ...bin,
+        id: bin.Bin_ID,
+        latitude: parseFloat(bin.latitude as unknown as string) || 0,
+        longitude: parseFloat(bin.longitude as unknown as string) || 0
+      })) || [];
+    } catch (error) {
+      console.error("Exception in supabaseBins.getAll:", error);
+      return [];
+    }
   },
 
   async updateFillLevel(id: string, fillLevel: 'Low' | 'Medium' | 'Full') {
     const { data, error } = await supabase
-      .from('bins')
+      .from('Bin Data')
       .update({ fill_level: fillLevel })
-      .eq('id', id)
+      .eq('Bin_ID', id)
       .select()
       .single();
     if (error) throw error;
@@ -222,7 +268,7 @@ export const supabaseBins = {
   subscribeToChanges(callback: (payload: any) => void) {
     return supabase
       .channel('bins-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'bins' }, callback)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'Bin Data' }, callback)
       .subscribe();
   },
 };
@@ -230,18 +276,31 @@ export const supabaseBins = {
 // Workers
 export const supabaseWorkers = {
   async getAll() {
-    const { data, error } = await supabase
-      .from('workers')
-      .select('*');
-    if (error) throw error;
-    return data;
+    try {
+      const { data, error } = await supabase
+        .from('Workers')
+        .select('*');
+
+      if (error) {
+        console.error("Error fetching 'Workers':", error);
+        throw error;
+      }
+
+      console.log("Fetched 'Workers' Data:", data);
+
+      // Map name to id if needed
+      return data?.map(worker => ({ ...worker, id: worker.name })) || [];
+    } catch (error) {
+      console.error("Exception in supabaseWorkers.getAll:", error);
+      return [];
+    }
   },
 
   async getById(id: string) {
     const { data, error } = await supabase
-      .from('workers')
+      .from('Workers')
       .select('*')
-      .eq('id', id)
+      .eq('name', id)
       .single();
     if (error) throw error;
     return data;
@@ -249,9 +308,9 @@ export const supabaseWorkers = {
 
   async updateStatus(id: string, status: 'active' | 'on-leave' | 'inactive') {
     const { data, error } = await supabase
-      .from('workers')
+      .from('Workers')
       .update({ status })
-      .eq('id', id)
+      .eq('name', id)
       .select()
       .single();
     if (error) throw error;
@@ -262,7 +321,8 @@ export const supabaseWorkers = {
   subscribeToChanges(callback: (payload: any) => void) {
     return supabase
       .channel('workers-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'workers' }, callback)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'Workers' }, callback)
       .subscribe();
   },
 };
+

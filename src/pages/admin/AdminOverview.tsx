@@ -1,16 +1,24 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
-import { FileText, AlertTriangle, CheckCircle, Trash2, MapPin, TrendingUp, Clock, Activity, ShieldAlert } from "lucide-react";
+import { FileText, AlertTriangle, CheckCircle, Trash2, MapPin, TrendingUp, Clock, Activity, ShieldAlert, Loader2 } from "lucide-react";
 import { mockAreaScores } from "@/data/mockData";
 import { motion } from "framer-motion";
+import { supabase } from "@/lib/supabase";
 
-const recentAlerts = [
-  { id: 1, message: "Sector 7: Overflow Detected", location: "South Masi St", time: "5 min ago", type: "urgent" },
-  { id: 2, message: "New Anomaly: Unauthorized Bio-Waste", location: "Vilakkuthoon", time: "12 min ago", type: "new" },
-  { id: 3, message: "Unit 04 Deployed to RPT-005", location: "KK Nagar", time: "25 min ago", type: "info" },
-  { id: 4, message: "RPT-003 Neutralized", location: "Sellur", time: "1 hour ago", type: "resolved" },
-];
+interface Report {
+  id: string;
+  user_id: string;
+  user_name: string;
+  type: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  address: string | null;
+  status: string;
+  created_at: string;
+}
 
 const alertStyles: Record<string, string> = {
   urgent: "border-l-destructive text-destructive bg-destructive/10 shadow-[inset_4px_0_0_0_rgba(239,68,68,1)] backdrop-blur-sm",
@@ -24,7 +32,75 @@ const slideUp = {
   visible: { opacity: 1, y: 0 },
 };
 
+const formatTimeAgo = (dateString: string) => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+  
+  if (diffMins < 1) return "just now";
+  if (diffMins < 60) return `${diffMins} min ago`;
+  if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+  return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+};
+
 const AdminOverview = () => {
+  const [reports, setReports] = useState<Report[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('reports')
+          .select('*')
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        setReports(data || []);
+      } catch (err) {
+        console.error('Error fetching reports:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReports();
+
+    // Real-time subscription
+    const channel = supabase
+      .channel('admin-overview-reports')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'reports' }, () => {
+        fetchReports();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  // Calculate stats from live data
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  
+  const dailyReports = reports.filter(r => new Date(r.created_at) >= todayStart).length;
+  const pendingCount = reports.filter(r => r.status === 'pending').length;
+  const resolvedCount = reports.filter(r => r.status === 'resolved').length;
+  const criticalCount = reports.filter(r => r.type === 'overflow' && r.status === 'pending').length;
+
+  // Transform reports to alerts format
+  const recentAlerts = reports.slice(0, 4).map(report => ({
+    id: report.id,
+    message: `${report.type.charAt(0).toUpperCase() + report.type.slice(1)}: ${report.description?.slice(0, 30) || 'New report'}...`,
+    location: report.address || `${report.latitude.toFixed(4)}, ${report.longitude.toFixed(4)}`,
+    time: formatTimeAgo(report.created_at),
+    type: report.status === 'resolved' ? 'resolved' : 
+          report.type === 'overflow' ? 'urgent' : 
+          report.status === 'pending' ? 'new' : 'info'
+  }));
   return (
     <div className="bg-[#13161c] min-h-screen text-slate-200">
       <div className="relative z-10 p-6 lg:p-8">
@@ -58,7 +134,11 @@ const AdminOverview = () => {
                   <div className="absolute inset-0 bg-primary/20 blur-md rounded" />
                 </div>
                 <div>
-                  <p className="text-3xl font-bold font-mono text-white">156</p>
+                  {loading ? (
+                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                  ) : (
+                    <p className="text-3xl font-bold font-mono text-white">{dailyReports}</p>
+                  )}
                   <p className="text-[10px] tracking-[0.2em] font-bold text-primary uppercase">Daily Reports</p>
                 </div>
               </CardContent>
@@ -74,7 +154,11 @@ const AdminOverview = () => {
                   <div className="absolute inset-0 bg-accent/20 blur-md rounded animate-pulse" />
                 </div>
                 <div>
-                  <p className="text-3xl font-bold font-mono text-white">23</p>
+                  {loading ? (
+                    <Loader2 className="h-6 w-6 animate-spin text-accent" />
+                  ) : (
+                    <p className="text-3xl font-bold font-mono text-white">{pendingCount}</p>
+                  )}
                   <p className="text-[10px] tracking-[0.2em] font-bold text-accent uppercase">Pending Ops</p>
                 </div>
               </CardContent>
@@ -89,7 +173,11 @@ const AdminOverview = () => {
                   <CheckCircle className="h-6 w-6 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] z-10" />
                 </div>
                 <div>
-                  <p className="text-3xl font-bold font-mono text-white">118</p>
+                  {loading ? (
+                    <Loader2 className="h-6 w-6 animate-spin text-white" />
+                  ) : (
+                    <p className="text-3xl font-bold font-mono text-white">{resolvedCount}</p>
+                  )}
                   <p className="text-[10px] tracking-[0.2em] font-bold text-slate-400 uppercase">Resolved</p>
                 </div>
               </CardContent>
@@ -105,7 +193,11 @@ const AdminOverview = () => {
                   <div className="absolute inset-0 bg-destructive/20 blur-md rounded animate-pulse" />
                 </div>
                 <div>
-                  <p className="text-3xl font-bold font-mono text-white">3</p>
+                  {loading ? (
+                    <Loader2 className="h-6 w-6 animate-spin text-destructive" />
+                  ) : (
+                    <p className="text-3xl font-bold font-mono text-white">{criticalCount}</p>
+                  )}
                   <p className="text-[10px] tracking-[0.2em] font-bold text-destructive uppercase">Critical Alerts</p>
                 </div>
               </CardContent>

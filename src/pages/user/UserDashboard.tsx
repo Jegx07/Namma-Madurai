@@ -1,7 +1,67 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mic, ArrowUpRight, MapPin, Search, ArrowUp, Zap } from "lucide-react";
+import { Mic, ArrowRight, SlidersHorizontal, ArrowUpRight, ArrowDownRight, Users, Bell, Search, Activity, FileText, TrendingUp, CheckCircle, MapPin, Clock, Loader2 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { motion } from "framer-motion";
+import { supabase } from "@/lib/supabase";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
+// Fix for default marker icons in Leaflet with Vite
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconUrl: markerIcon,
+  iconRetinaUrl: markerIcon2x,
+  shadowUrl: markerShadow,
+});
+
+const binIcon = new L.Icon({
+  iconUrl: "https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
+interface Report {
+  id: string;
+  user_id: string;
+  user_name: string;
+  type: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  address: string | null;
+  status: string;
+  created_at: string;
+}
+
+interface Bin {
+  id: string;
+  latitude: number;
+  longitude: number;
+  fill_level: string;
+  area: string;
+  last_collected: string | null;
+  created_at: string;
+}
+
+interface UserScore {
+  id: string;
+  user_id: string;
+  user_name: string;
+  email: string;
+  score: number;
+  reports_submitted: number;
+}
 import {
   BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie
 } from "recharts";
@@ -45,7 +105,106 @@ const CustomMiniTooltip = ({ active, payload }: CustomTooltipProps) => {
   return null;
 };
 
-const UserDashboard = () => {
+  const [reports, setReports] = useState<Report[]>([]);
+  const [bins, setBins] = useState<Bin[]>([]);
+  const [userScore, setUserScore] = useState<UserScore | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch user's reports
+        const { data: reportsData, error: reportsError } = await supabase
+          .from('Report 1')
+          .select('*')
+          .eq('user_id', user?.id || '')
+          .order('created_at', { ascending: false });
+
+        if (reportsError) {
+          console.error("Error fetching 'Report 1':", reportsError);
+          throw reportsError;
+        }
+        console.log("Fetched 'Report 1' Data:", reportsData);
+        setReports(reportsData?.map(r => ({
+          ...r,
+          latitude: parseFloat(r.latitude as unknown as string) || 0,
+          longitude: parseFloat(r.longitude as unknown as string) || 0
+        })) || []);
+
+        // Fetch bins
+        const { data: binsData, error: binsError } = await supabase
+          .from('Bin Data')
+          .select('*');
+
+        if (binsError) {
+          console.error("Error fetching 'Bin Data':", binsError);
+        } else if (binsData) {
+          console.log("Fetched 'Bin Data':", binsData);
+          setBins(binsData.map(b => ({
+            ...b,
+            id: b.Bin_ID || b.id,
+            latitude: parseFloat(b.latitude as unknown as string) || 0,
+            longitude: parseFloat(b.longitude as unknown as string) || 0
+          })));
+        }
+
+        // Fetch user's score
+        const { data: scoreData, error: scoreError } = await supabase
+          .from('User Dashboard')
+          .select('*')
+          .eq('user_id', user?.id || '')
+          .single();
+
+        if (scoreError) {
+          console.error("Error fetching 'User Dashboard' score:", scoreError);
+        } else if (scoreData) {
+          console.log("Fetched 'User Dashboard' Score Data:", scoreData);
+          setUserScore(scoreData);
+        }
+      } catch (err) {
+        console.error('Error fetching data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user?.id) {
+      fetchData();
+    } else {
+      setLoading(false);
+    }
+
+    // Real-time subscription for reports
+    const channel = supabase
+      .channel('user-dashboard-reports')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'Report 1' }, () => {
+        if (user?.id) fetchData();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'User Dashboard' }, () => {
+        if (user?.id) fetchData();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id]);
+
+  // Calculate stats from live data
+  const myReportsCount = reports.length;
+  const resolvedCount = reports.filter(r => r.status === 'resolved').length;
+  const pendingCount = reports.filter(r => r.status === 'pending').length;
+  const cleanScore = userScore?.score || 0;
+
+  // Transform reports to recent activity format
+  const recentActivity = reports.slice(0, 3).map(report => ({
+    id: report.id,
+    type: report.type,
+    title: `${report.type.charAt(0).toUpperCase() + report.type.slice(1)} reported`,
+    location: report.address || `${report.latitude.toFixed(4)}, ${report.longitude.toFixed(4)}`,
+    status: report.status
+  }));
+
   return (
     <div className="min-h-screen bg-[#f3f4f6] text-slate-800 p-6 lg:p-8 font-sans flex flex-col gap-6">
 
@@ -64,7 +223,7 @@ const UserDashboard = () => {
           <div className="flex items-center gap-8">
             {/* Stat 1 */}
             <div className="flex items-center gap-3">
-              <div className="text-3xl font-medium text-gray-900 leading-none">124</div>
+              <div className="text-3xl font-medium text-gray-900 leading-none">{loading ? <Loader2 className="h-6 w-6 animate-spin text-emerald-500" /> : myReportsCount}</div>
               <div className="flex flex-col">
                 <div className="h-4 w-16 mb-0.5">
                   <ResponsiveContainer width="100%" height="100%">
@@ -79,7 +238,7 @@ const UserDashboard = () => {
 
             {/* Stat 2 */}
             <div className="flex items-center gap-3">
-              <div className="text-3xl font-medium text-gray-900 leading-none">82</div>
+              <div className="text-3xl font-medium text-gray-900 leading-none">{loading ? <Loader2 className="h-6 w-6 animate-spin text-amber-500" /> : resolvedCount}</div>
               <div className="flex flex-col">
                 <div className="h-4 w-16 mb-0.5">
                   <ResponsiveContainer width="100%" height="100%">
@@ -94,7 +253,7 @@ const UserDashboard = () => {
 
             {/* Stat 3 */}
             <div className="flex items-center gap-3">
-              <div className="text-3xl font-medium text-gray-900 leading-none">42</div>
+              <div className="text-3xl font-medium text-gray-900 leading-none">{loading ? <Loader2 className="h-6 w-6 animate-spin text-orange-500" /> : pendingCount}</div>
               <div className="flex flex-col">
                 <div className="h-4 w-16 mb-0.5">
                   <ResponsiveContainer width="100%" height="100%">
@@ -127,9 +286,6 @@ const UserDashboard = () => {
                 <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
                 <span className="text-xs font-semibold text-emerald-600 uppercase tracking-widest">Active Score</span>
               </div>
-              <div className="text-xl font-medium text-gray-900 mb-1">CITY AVERAGE</div>
-              <div className="text-xs text-gray-400 font-medium mb-6">#NMA82030</div>
-
               <div className="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col items-center justify-center">
                 <div className="w-24 h-24 relative">
                   <ResponsiveContainer width="100%" height="100%">
@@ -154,7 +310,10 @@ const UserDashboard = () => {
                   </ResponsiveContainer>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <span className="text-[10px] text-gray-500 font-medium uppercase mt-2">Score</span>
-                    <span className="text-lg font-bold text-gray-900 leading-none">82%</span>
+                    <span className="text-lg font-bold text-gray-900 leading-none">{loading ? <Loader2 className="h-4 w-4 animate-spin text-gray-400" /> : `${cleanScore}%`}</span>
+                  </div>
+                </div>
+              </div>
                   </div>
                 </div>
               </div>
@@ -169,19 +328,40 @@ const UserDashboard = () => {
                 <ArrowUpRight className="w-4 h-4 text-gray-400" />
               </div>
 
-              <div className="flex justify-between items-end mb-8 relative">
-                <div>
-                  <div className="text-xs text-gray-500 font-semibold mb-1">High Priority</div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold text-gray-900">4.82k</span>
-                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">+0.24</span>
+              <div className="space-y-4 mb-8">
+                {loading ? (
+                  <div className="flex items-center justify-center py-4">
+                    <Loader2 className="h-6 w-6 animate-spin text-[#63F148]" />
                   </div>
-                </div>
-                <div>
-                  <div className="text-xs text-gray-500 font-semibold mb-1">Low Priority</div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold text-gray-900">1.47k</span>
-                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">+0.18</span>
+                ) : recentActivity.length === 0 ? (
+                  <div className="text-center py-4 text-[#7f8a9e] text-sm">
+                    No reports yet. Start by reporting an issue!
+                  </div>
+                ) : (
+                  recentActivity.map((item) => (
+                    <div key={item.id} className="flex flex-col gap-1 border-b border-white/5 pb-3">
+                      <div className="flex justify-between items-start">
+                        <p className="text-sm font-medium text-white truncate max-w-[180px]">{item.title}</p>
+                        <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase ${item.status === 'resolved' ? 'bg-[#63F148]/20 text-[#63F148]' : 'bg-[#FF9900]/20 text-[#FF9900]'}`}>
+                          {item.status}
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#7f8a9e] flex items-center gap-1">
+                        <MapPin className="h-3 w-3" /> {item.location}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* Custom Bar Chart Graphic matches image spacing */}
+              <div className="mt-auto">
+                <div className="flex h-[80px] items-end justify-between border-l border-b border-white/10 pb-2 pl-3 pr-2 relative">
+                  {/* Y-axis labels */}
+                  <div className="absolute -left-7 bottom-2 flex flex-col justify-between h-full text-[9px] text-[#7f8a9e] py-0">
+                    <span>30</span>
+                    <span>15</span>
+                    <span>0</span>
                   </div>
                 </div>
                 <div className="absolute right-0 bottom-1">
@@ -189,17 +369,64 @@ const UserDashboard = () => {
                 </div>
               </div>
 
-              <div className="flex-1 w-full min-h-[120px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={reportingTrendsData}>
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca3af' }} dy={10} />
-                    <Tooltip content={<CustomMiniTooltip />} cursor={{ fill: '#f3f4f6' }} />
-                    <Bar dataKey="value" fill="#d1d5db" radius={[2, 2, 2, 2]} barSize={4}
-                      activeBar={<div style={{ fill: '#10b981' }} />} />
-                    {/* Using a custom trick for the active green bar on hover using activeBar natively or just setting a cell. 
-                         For simplicity, we'll map Cells. */}
-                  </BarChart>
-                </ResponsiveContainer>
+        {/* Middle Column: Interactive Bin Map */}
+        <div className="lg:col-span-5 relative group">
+          <Card className="bg-[#1b1f27] border-white/5 rounded-[1.5rem] shadow-xl h-full overflow-hidden relative min-h-[400px]">
+            {loading ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-[#181c25]">
+                <Loader2 className="h-8 w-8 animate-spin text-white/50" />
+              </div>
+            ) : (
+              <MapContainer
+                center={[9.9252, 78.1198]} // Madurai coordinates
+                zoom={13}
+                className="h-full w-full absolute inset-0 z-10"
+                zoomControl={false}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                  url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" // Dark theme tile layer to match UI
+                />
+
+                {bins.map((bin) => (
+                  <Marker
+                    key={bin.id}
+                    position={[bin.latitude, bin.longitude]}
+                    icon={binIcon}
+                  >
+                    <Popup className="custom-popup">
+                      <div className="font-sans">
+                        <h4 className="font-semibold text-sm mb-1">{bin.area}</h4>
+                        <div className="text-xs space-y-1 text-slate-600">
+                          <p><span className="font-medium">Fill Level:</span> {bin.fill_level}</p>
+                          <p><span className="font-medium">Lat / Lng:</span> {bin.latitude.toFixed(4)}, {bin.longitude.toFixed(4)}</p>
+                          {bin.last_collected && (
+                            <p><span className="font-medium">Last Collected:</span> {new Date(bin.last_collected).toLocaleDateString()}</p>
+                          )}
+                          {bin.created_at && (
+                            <p><span className="font-medium">Added:</span> {new Date(bin.created_at).toLocaleDateString()}</p>
+                          )}
+                        </div>
+                      </div>
+                    </Popup>
+                  </Marker>
+                ))}
+              </MapContainer>
+            )}
+
+            {/* Bottom right labels (overlay on top of map) */}
+            <div className="absolute bottom-6 right-6 z-20 flex gap-6 text-left bg-black/40 backdrop-blur-md p-3 rounded-xl border border-white/10">
+              <div>
+                <p className="text-[10px] text-[#7f8a9e] mb-1">Total Reports</p>
+                <p className="text-xl font-light text-white">4.2K</p>
+              </div>
+              <div>
+                <p className="text-[10px] text-[#7f8a9e] mb-1">Active Users</p>
+                <p className="text-xl font-light text-white">1,400</p>
+              </div>
+              <div>
+                <p className="text-[10px] text-[#7f8a9e] mb-1">Resolved</p>
+                <p className="text-xl font-light text-white">3.1K</p>
               </div>
             </CardContent>
           </Card>
