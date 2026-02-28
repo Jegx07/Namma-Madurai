@@ -39,6 +39,12 @@ import WardRankings from "./pages/cri/WardRankings";
 import TrendAnalytics from "./pages/cri/TrendAnalytics";
 import WardComparison from "./pages/cri/WardComparison";
 
+// CPPE pages
+import PerformanceBoard from "./pages/cppe/PerformanceBoard";
+import MovementTracker from "./pages/cppe/MovementTracker";
+import WeeklyHighlights from "./pages/cppe/WeeklyHighlights";
+import MomentumMap from "./pages/cppe/MomentumMap";
+
 // Admin pages
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminReports from "./pages/admin/AdminReports";
@@ -114,6 +120,11 @@ const AppRoutes = () => {
         <Route path="cri/rankings" element={<WardRankings />} />
         <Route path="cri/trends" element={<TrendAnalytics />} />
         <Route path="cri/compare" element={<WardComparison />} />
+        {/* CPPE routes */}
+        <Route path="cppe/performance" element={<PerformanceBoard />} />
+        <Route path="cppe/movement" element={<MovementTracker />} />
+        <Route path="cppe/highlights" element={<WeeklyHighlights />} />
+        <Route path="cppe/momentum-map" element={<MomentumMap />} />
       </Route>
 
       {/* Admin routes */}

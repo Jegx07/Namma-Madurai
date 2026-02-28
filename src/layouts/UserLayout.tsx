@@ -20,7 +20,9 @@ import {
   ChevronDown,
   TrendingUp,
   ArrowLeftRight,
-  Activity
+  Activity,
+  Zap,
+  Sparkles
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import ChatAssistant from "@/components/ChatAssistant";
@@ -50,6 +52,13 @@ const criNavItems = [
   { label: "Ward Comparison", path: "/user/cri/compare", icon: ArrowLeftRight },
 ];
 
+const cppeNavItems = [
+  { label: "Performance Board", path: "/user/cppe/performance", icon: BarChart3 },
+  { label: "Movement Tracker", path: "/user/cppe/movement", icon: TrendingUp },
+  { label: "Weekly Highlights", path: "/user/cppe/highlights", icon: Sparkles },
+  { label: "Momentum Map", path: "/user/cppe/momentum-map", icon: Map },
+];
+
 const UserLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -57,6 +66,7 @@ const UserLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [youthOpen, setYouthOpen] = useState(location.pathname.includes('/youth'));
   const [criOpen, setCriOpen] = useState(location.pathname.includes('/cri'));
+  const [cppeOpen, setCppeOpen] = useState(location.pathname.includes('/cppe'));
 
   // Hide chat assistant on map page
   const isMapPage = location.pathname === "/user/map";
@@ -114,7 +124,7 @@ const UserLayout = () => {
           </div>
 
           {/* Navigation */}
-          <ScrollArea className="flex-1 px-3 py-5">
+          <div className="flex-1 overflow-y-auto px-3 py-5">
             <nav className="space-y-1.5">
               {userNavItems.map((item) => (
                 <NavLink
@@ -209,8 +219,46 @@ const UserLayout = () => {
                   </div>
                 )}
               </div>
+
+              {/* Civic Momentum (CPPE) Section */}
+              <div className="pt-3 mt-3 border-t border-gray-100">
+                <button
+                  onClick={() => setCppeOpen(!cppeOpen)}
+                  className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold transition-all ${
+                    location.pathname.includes('/cppe')
+                      ? 'bg-emerald-50 text-emerald-700'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Zap className={`h-5 w-5 ${location.pathname.includes('/cppe') ? 'text-emerald-600' : 'text-gray-400'}`} />
+                    Civic Momentum
+                  </div>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${cppeOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {cppeOpen && (
+                  <div className="mt-1 ml-4 space-y-0.5">
+                    {cppeNavItems.map((item) => (
+                      <NavLink
+                        key={item.path}
+                        to={item.path}
+                        onClick={() => setSidebarOpen(false)}
+                        className={({ isActive }) =>
+                          `flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all ${isActive
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                          }`
+                        }
+                      >
+                        <item.icon className="h-4 w-4" />
+                        {item.label}
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
+              </div>
             </nav>
-          </ScrollArea>
+          </div>
 
           {/* User section */}
           <div className="border-t border-gray-100 p-5 bg-gray-50/50">
