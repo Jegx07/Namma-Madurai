@@ -230,9 +230,8 @@ const SignIn = () => {
             style={{ background: 'linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(6,182,212,0.08) 100%)', border: '1px solid rgba(34,197,94,0.3)', backdropFilter: 'blur(20px)' }}
           >
             <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full overflow-hidden bg-white/10"
-                style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(34,197,94,0.4)' }}>
-                <img src="/2.png" alt="Logo" className="h-full w-full object-contain p-0.5" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md shadow-sm">
+                <img src="/2.png" alt="Logo" className="h-6 w-6 object-contain drop-shadow-md" />
               </div>
               <span className="font-semibold tracking-wider text-white/90 text-sm uppercase">NAMMA MADURAI</span>
             </div>

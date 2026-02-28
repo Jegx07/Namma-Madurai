@@ -80,8 +80,8 @@ const SignUp = () => {
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
       {/* Logo */}
       <Link to="/" className="mb-8 flex items-center gap-2">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full overflow-hidden bg-white/10 shadow-lg">
-          <img src="/2.png" alt="Logo" className="h-full w-full object-contain p-0.5" />
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 backdrop-blur-md shadow-lg">
+          <img src="/2.png" alt="Logo" className="h-9 w-9 object-contain drop-shadow-md" />
         </div>
         <span className="text-2xl font-bold text-foreground tracking-wider">NAMMA MADURAI</span>
       </Link>

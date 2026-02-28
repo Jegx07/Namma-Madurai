@@ -7,12 +7,12 @@ const LandingPage = () => {
   return (
     <div className="flex min-h-screen flex-col">
       {/* Header */}
-      <header className="fixed top-0 w-full z-50 border-b border-white/10 bg-black/40 backdrop-blur-md">
-        <div className="container mx-auto px-4 flex h-20 items-center justify-between">
+      <header className="fixed top-0 w-full z-50 bg-transparent">
+        <div className="container mx-auto px-4 flex h-20 items-center justify-between py-2">
           {/* Left: Logo */}
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden bg-white/10 shadow-[0_0_20px_rgba(16,185,129,0.3)] border border-white/20">
-              <img src="/2.png" alt="Logo" className="h-full w-full object-contain p-0.5" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+              <img src="/2.png" alt="Logo" className="h-8 w-8 object-contain drop-shadow-md" />
             </div>
             <span className="text-xl font-bold tracking-wide text-white">NAMMA MADURAI</span>
           </div>

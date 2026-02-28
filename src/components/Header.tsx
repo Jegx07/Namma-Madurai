@@ -21,8 +21,8 @@ const Header = () => {
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full overflow-hidden bg-white/10">
-            <img src="/2.png" alt="NAMMA MADURAI Logo" className="h-full w-full object-contain" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+            <img src="/2.png" alt="NAMMA MADURAI Logo" className="h-8 w-8 object-contain drop-shadow-md" />
           </div>
           <div>
             <span className="text-lg font-bold text-foreground">NAMMA MADURAI</span>
