@@ -33,10 +33,10 @@ const Architecture = () => {
       <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-              <MapPin className="h-5 w-5 text-primary-foreground" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full overflow-hidden bg-white/10">
+              <img src="/2.png" alt="Logo" className="h-full w-full object-contain p-0.5" />
             </div>
-            <span className="text-lg font-bold text-foreground">Namma Madurai</span>
+            <span className="text-lg font-bold text-foreground">NAMMA MADURAI</span>
           </Link>
           <Link to="/">
             <Button variant="outline" className="gap-2">
@@ -49,7 +49,7 @@ const Architecture = () => {
 
       <div className="container py-10">
         <h1 className="mb-2 text-3xl font-bold text-foreground">System Architecture</h1>
-        <p className="mb-10 text-muted-foreground">How Namma Madurai processes civic intelligence.</p>
+        <p className="mb-10 text-muted-foreground">How NAMMA MADURAI processes civic intelligence.</p>
 
         <div className="space-y-10">
           {flowSteps.map((flow, fi) => (
@@ -97,7 +97,7 @@ const Architecture = () => {
       {/* Footer */}
       <footer className="border-t bg-muted/30">
         <div className="container flex flex-col items-center gap-2 py-6 text-center text-sm text-muted-foreground md:flex-row md:justify-between">
-          <p>© 2026 Namma Madurai – Smart Civic Intelligence Platform</p>
+          <p>© 2026 NAMMA MADURAI – Smart Civic Intelligence Platform</p>
           <p className="font-medium">Powered by Google Cloud for Smart Cities</p>
         </div>
       </footer>
