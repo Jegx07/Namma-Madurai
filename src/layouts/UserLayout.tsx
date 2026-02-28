@@ -12,7 +12,12 @@ import {
   MessageCircle,
   User,
   LogOut,
-  X
+  X,
+  GraduationCap,
+  Building2,
+  Award,
+  Shield,
+  ChevronDown
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import ChatAssistant from "@/components/ChatAssistant";
@@ -27,11 +32,20 @@ const userNavItems = [
   { label: "Profile", path: "/user/profile", icon: User },
 ];
 
+const youthNavItems = [
+  { label: "Registration", path: "/user/youth/registration", icon: Building2 },
+  { label: "Dashboard", path: "/user/youth/dashboard", icon: LayoutDashboard },
+  { label: "City Leaderboard", path: "/user/youth/leaderboard", icon: Trophy },
+  { label: "Awards", path: "/user/youth/awards", icon: Award },
+  { label: "Admin Oversight", path: "/user/youth/admin", icon: Shield },
+];
+
 const UserLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout, isAuthenticated } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [youthOpen, setYouthOpen] = useState(location.pathname.includes('/youth'));
 
   // Hide chat assistant on map page
   const isMapPage = location.pathname === "/user/map";
@@ -108,6 +122,44 @@ const UserLayout = () => {
                   {item.label}
                 </NavLink>
               ))}
+
+              {/* Youth Program Section */}
+              <div className="pt-3 mt-3 border-t border-gray-100">
+                <button
+                  onClick={() => setYouthOpen(!youthOpen)}
+                  className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold transition-all ${
+                    location.pathname.includes('/youth')
+                      ? 'bg-emerald-50 text-emerald-700'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <GraduationCap className={`h-5 w-5 ${location.pathname.includes('/youth') ? 'text-emerald-600' : 'text-gray-400'}`} />
+                    Youth Program
+                  </div>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${youthOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {youthOpen && (
+                  <div className="mt-1 ml-4 space-y-0.5">
+                    {youthNavItems.map((item) => (
+                      <NavLink
+                        key={item.path}
+                        to={item.path}
+                        onClick={() => setSidebarOpen(false)}
+                        className={({ isActive }) =>
+                          `flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all ${isActive
+                            ? 'bg-emerald-50 text-emerald-700'
+                            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                          }`
+                        }
+                      >
+                        <item.icon className="h-4 w-4" />
+                        {item.label}
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
+              </div>
             </nav>
           </ScrollArea>
 

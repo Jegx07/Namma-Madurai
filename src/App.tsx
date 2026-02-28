@@ -26,6 +26,13 @@ import UserLeaderboard from "./pages/user/UserLeaderboard";
 import UserAssistant from "./pages/user/UserAssistant";
 import UserProfile from "./pages/user/UserProfile";
 
+// Youth Program pages
+import YouthRegistration from "./pages/youth/YouthRegistration";
+import YouthDashboard from "./pages/youth/YouthDashboard";
+import YouthLeaderboard from "./pages/youth/YouthLeaderboard";
+import YouthAwards from "./pages/youth/YouthAwards";
+import YouthAdminPanel from "./pages/youth/YouthAdminPanel";
+
 // Admin pages
 import AdminOverview from "./pages/admin/AdminOverview";
 import AdminReports from "./pages/admin/AdminReports";
@@ -90,6 +97,12 @@ const AppRoutes = () => {
         <Route path="leaderboard" element={<UserLeaderboard />} />
         <Route path="assistant" element={<UserAssistant />} />
         <Route path="profile" element={<UserProfile />} />
+        {/* Youth Program routes */}
+        <Route path="youth/registration" element={<YouthRegistration />} />
+        <Route path="youth/dashboard" element={<YouthDashboard />} />
+        <Route path="youth/leaderboard" element={<YouthLeaderboard />} />
+        <Route path="youth/awards" element={<YouthAwards />} />
+        <Route path="youth/admin" element={<YouthAdminPanel />} />
       </Route>
 
       {/* Admin routes */}
