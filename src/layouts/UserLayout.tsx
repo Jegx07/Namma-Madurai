@@ -85,11 +85,11 @@ const UserLayout = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#f3f4f6] text-slate-800 font-sans">
+    <div className="flex min-h-screen bg-[#000000] text-white font-['Inter',sans-serif]">
       {/* Sidebar overlay (visible on all breakpoints when open) */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm transition-opacity"
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -102,21 +102,21 @@ const UserLayout = () => {
 
       {/* Sidebar (hidden by default, open on toggle or hover) */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 transform border-r border-gray-200 bg-white transition-transform duration-300 ease-in-out shadow-2xl sm:shadow-none ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        className={`fixed inset-y-0 left-0 z-50 w-64 transform border-r border-[rgba(26,242,193,0.12)] bg-[#0A1210] transition-transform duration-300 ease-in-out shadow-2xl sm:shadow-none ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         onMouseLeave={() => setSidebarOpen(false)}
       >
         <div className="flex h-full flex-col">
           {/* Logo */}
-          <div className="flex h-16 items-center gap-3 border-b border-gray-100 px-5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 backdrop-blur-md shadow-sm">
+          <div className="flex h-16 items-center gap-3 border-b border-[rgba(26,242,193,0.1)] px-5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[rgba(26,242,193,0.08)] backdrop-blur-md shadow-sm">
               <img src="/2.png" alt="Logo" className="h-7 w-7 object-contain drop-shadow-sm" />
             </div>
-            <span className="text-lg font-bold text-gray-900 tracking-tight">NAMMA MADURAI</span>
+            <span className="text-lg font-bold text-[#E8F0ED] tracking-tight">NAMMA MADURAI</span>
             <Button
               variant="ghost"
               size="icon"
-              className="ml-auto text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full h-8 w-8"
+              className="ml-auto text-[rgba(232,240,237,0.4)] hover:text-[#1AF2C1] hover:bg-[rgba(26,242,193,0.08)] rounded-full h-8 w-8"
               onClick={() => setSidebarOpen(false)}
             >
               <X className="h-4 w-4" />
@@ -134,28 +134,27 @@ const UserLayout = () => {
                   onClick={() => setSidebarOpen(false)}
                   className={({ isActive }) =>
                     `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all ${isActive
-                      ? "bg-emerald-50 text-emerald-700"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      ? "bg-[rgba(26,242,193,0.1)] text-[#1AF2C1]"
+                      : "text-[rgba(232,240,237,0.5)] hover:bg-[rgba(26,242,193,0.05)] hover:text-[#E8F0ED]"
                     }`
                   }
                 >
-                  <item.icon className={`h-5 w-5 ${location.pathname === item.path || (item.end && location.pathname === '/user') ? 'text-emerald-600' : 'text-gray-400'}`} />
+                  <item.icon className={`h-5 w-5 ${location.pathname === item.path || (item.end && location.pathname === '/user') ? 'text-[#1AF2C1]' : 'text-[rgba(232,240,237,0.3)]'}`} />
                   {item.label}
                 </NavLink>
               ))}
 
               {/* Youth Program Section */}
-              <div className="pt-3 mt-3 border-t border-gray-100">
+              <div className="pt-3 mt-3 border-t border-[rgba(26,242,193,0.08)]">
                 <button
                   onClick={() => setYouthOpen(!youthOpen)}
-                  className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold transition-all ${
-                    location.pathname.includes('/youth')
-                      ? 'bg-emerald-50 text-emerald-700'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
+                  className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold transition-all ${location.pathname.includes('/youth')
+                      ? 'bg-[rgba(26,242,193,0.1)] text-[#1AF2C1]'
+                      : 'text-[rgba(232,240,237,0.5)] hover:bg-[rgba(26,242,193,0.05)] hover:text-[#E8F0ED]'
+                    }`}
                 >
                   <div className="flex items-center gap-3">
-                    <GraduationCap className={`h-5 w-5 ${location.pathname.includes('/youth') ? 'text-emerald-600' : 'text-gray-400'}`} />
+                    <GraduationCap className={`h-5 w-5 ${location.pathname.includes('/youth') ? 'text-[#1AF2C1]' : 'text-[rgba(232,240,237,0.3)]'}`} />
                     Youth Program
                   </div>
                   <ChevronDown className={`h-4 w-4 transition-transform ${youthOpen ? 'rotate-180' : ''}`} />
@@ -169,8 +168,8 @@ const UserLayout = () => {
                         onClick={() => setSidebarOpen(false)}
                         className={({ isActive }) =>
                           `flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all ${isActive
-                            ? 'bg-emerald-50 text-emerald-700'
-                            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                            ? 'bg-[rgba(26,242,193,0.1)] text-[#1AF2C1]'
+                            : 'text-[rgba(232,240,237,0.4)] hover:bg-[rgba(26,242,193,0.05)] hover:text-[#E8F0ED]'
                           }`
                         }
                       >
@@ -186,14 +185,13 @@ const UserLayout = () => {
               <div className="pt-3 mt-3 border-t border-gray-100">
                 <button
                   onClick={() => setCriOpen(!criOpen)}
-                  className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold transition-all ${
-                    location.pathname.includes('/cri')
-                      ? 'bg-emerald-50 text-emerald-700'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
+                  className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold transition-all ${location.pathname.includes('/cri')
+                      ? 'bg-[rgba(26,242,193,0.1)] text-[#1AF2C1]'
+                      : 'text-[rgba(232,240,237,0.5)] hover:bg-[rgba(26,242,193,0.05)] hover:text-[#E8F0ED]'
+                    }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Activity className={`h-5 w-5 ${location.pathname.includes('/cri') ? 'text-emerald-600' : 'text-gray-400'}`} />
+                    <Activity className={`h-5 w-5 ${location.pathname.includes('/cri') ? 'text-[#1AF2C1]' : 'text-[rgba(232,240,237,0.3)]'}`} />
                     Civic Reputation
                   </div>
                   <ChevronDown className={`h-4 w-4 transition-transform ${criOpen ? 'rotate-180' : ''}`} />
@@ -224,14 +222,13 @@ const UserLayout = () => {
               <div className="pt-3 mt-3 border-t border-gray-100">
                 <button
                   onClick={() => setCppeOpen(!cppeOpen)}
-                  className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold transition-all ${
-                    location.pathname.includes('/cppe')
-                      ? 'bg-emerald-50 text-emerald-700'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
+                  className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold transition-all ${location.pathname.includes('/cppe')
+                      ? 'bg-[rgba(26,242,193,0.1)] text-[#1AF2C1]'
+                      : 'text-[rgba(232,240,237,0.5)] hover:bg-[rgba(26,242,193,0.05)] hover:text-[#E8F0ED]'
+                    }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Zap className={`h-5 w-5 ${location.pathname.includes('/cppe') ? 'text-emerald-600' : 'text-gray-400'}`} />
+                    <Zap className={`h-5 w-5 ${location.pathname.includes('/cppe') ? 'text-[#1AF2C1]' : 'text-[rgba(232,240,237,0.3)]'}`} />
                     Civic Momentum
                   </div>
                   <ChevronDown className={`h-4 w-4 transition-transform ${cppeOpen ? 'rotate-180' : ''}`} />
@@ -261,21 +258,21 @@ const UserLayout = () => {
           </div>
 
           {/* User section */}
-          <div className="border-t border-gray-100 p-5 bg-gray-50/50">
+          <div className="border-t border-[rgba(26,242,193,0.08)] p-5 bg-[rgba(10,18,16,0.5)]">
             <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700 border border-emerald-200/50">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(26,242,193,0.1)] text-sm font-bold text-[#1AF2C1] border border-[rgba(26,242,193,0.2)]">
                 {user?.avatar || "U"}
               </div>
               <div className="flex-1 overflow-hidden">
-                <p className="truncate text-sm font-bold text-gray-900">
+                <p className="truncate text-sm font-bold text-[#E8F0ED]">
                   {user?.name || "User"}
                 </p>
-                <p className="truncate text-xs font-medium text-gray-500">{user?.email}</p>
+                <p className="truncate text-xs font-medium text-[rgba(232,240,237,0.4)]">{user?.email}</p>
               </div>
             </div>
             <Button
               variant="outline"
-              className="w-full justify-start gap-2 h-10 rounded-xl bg-white border-gray-200 text-gray-600 hover:bg-gray-50 shadow-sm font-medium"
+              className="w-full justify-start gap-2 h-10 rounded-xl bg-[rgba(26,242,193,0.05)] border-[rgba(26,242,193,0.12)] text-[rgba(232,240,237,0.6)] hover:bg-[rgba(26,242,193,0.1)] hover:text-[#1AF2C1] shadow-sm font-medium"
               onClick={handleLogout}
             >
               <LogOut className="h-4 w-4" />
@@ -288,22 +285,22 @@ const UserLayout = () => {
       {/* Main content */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Universal header */}
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-gray-200 bg-white/95 backdrop-blur px-4 lg:px-6 shadow-sm">
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-[rgba(26,242,193,0.1)] bg-[#0A1210]/95 backdrop-blur-lg px-4 lg:px-6 shadow-lg" style={{ boxShadow: '0 4px 30px -10px rgba(0,0,0,0.5)' }}>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 backdrop-blur-md shadow-sm">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[rgba(26,242,193,0.08)] backdrop-blur-md shadow-sm">
                 <img src="/2.png" alt="Logo" className="h-7 w-7 object-contain drop-shadow-sm" />
               </div>
-              <span className="font-bold text-gray-900 tracking-tight text-lg">NAMMA MADURAI</span>
+              <span className="font-bold text-[#E8F0ED] tracking-tight text-lg">NAMMA MADURAI</span>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
             <div className="hidden sm:flex flex-col items-end">
-              <span className="text-sm font-bold text-gray-900 leading-none mb-1">{user?.name || "User"}</span>
-              <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wider">{user?.role === 'citizen' ? 'Citizen' : ''}</span>
+              <span className="text-sm font-bold text-[#E8F0ED] leading-none mb-1">{user?.name || "User"}</span>
+              <span className="text-xs font-semibold text-[#1AF2C1] uppercase tracking-wider">{user?.role === 'citizen' ? 'Citizen' : ''}</span>
             </div>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 border border-emerald-200/50 text-sm font-bold text-emerald-700 shadow-sm cursor-pointer hover:bg-emerald-200 transition-colors">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(26,242,193,0.1)] border border-[rgba(26,242,193,0.2)] text-sm font-bold text-[#1AF2C1] shadow-sm cursor-pointer hover:bg-[rgba(26,242,193,0.2)] transition-colors">
               {user?.avatar || "U"}
             </div>
           </div>
