@@ -2,33 +2,12 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mic, ArrowRight, SlidersHorizontal, ArrowUpRight, ArrowDownRight, Users, Bell, Search, Activity, FileText, TrendingUp, CheckCircle, MapPin, Clock, Loader2, Zap, ArrowUp } from "lucide-react";
+import { Mic, ArrowUpRight, MapPin, Search, ArrowUp, Zap, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-
-// Fix for default marker icons in Leaflet with Vite
-import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
-import markerIcon from "leaflet/dist/images/marker-icon.png";
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
-
-delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconUrl: markerIcon,
-  iconRetinaUrl: markerIcon2x,
-  shadowUrl: markerShadow,
-});
-
-const binIcon = new L.Icon({
-  iconUrl: "https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
+import {
+  BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie
+} from "recharts";
 
 interface Report {
   id: string;
@@ -61,10 +40,6 @@ interface UserScore {
   score: number;
   reports_submitted: number;
 }
-
-import {
-  BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie
-} from "recharts";
 
 // Data generation
 const reportingTrendsData = [
@@ -285,12 +260,10 @@ const UserDashboard = () => {
                 <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
                 <span className="text-xs font-semibold text-emerald-600 uppercase tracking-widest">Active Score</span>
               </div>
+              <div className="text-xl font-medium text-gray-900 mb-1">CITY AVERAGE</div>
+              <div className="text-xs text-gray-400 font-medium mb-6">#NMA82030</div>
 
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900 uppercase tracking-wide">City Average</h2>
-                  <p className="text-xs text-gray-400 font-medium">#NMA82030</p>
-                </div>
+              <div className="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col items-center justify-center">
                 <div className="w-24 h-24 relative">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -329,51 +302,54 @@ const UserDashboard = () => {
                 <ArrowUpRight className="w-4 h-4 text-gray-400" />
               </div>
 
-              <div className="space-y-4 mb-4">
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold text-gray-700">High Priority</span>
-                  <span className="text-xs font-medium text-gray-400 ml-auto">Low Priority</span>
+              <div className="flex justify-between items-end mb-8 relative">
+                <div>
+                  <div className="text-xs text-gray-500 font-semibold mb-1">High Priority</div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-bold text-gray-900">4.82k</span>
+                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">+0.24</span>
+                  </div>
                 </div>
-                <div className="flex items-end gap-3">
-                  <div>
-                    <p className="text-2xl font-bold text-gray-900">4.82k</p>
-                    <span className="text-xs text-emerald-500 font-medium">+0.24</span>
+                <div>
+                  <div className="text-xs text-gray-500 font-semibold mb-1">Low Priority</div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-bold text-gray-900">1.47k</span>
+                    <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">+0.18</span>
                   </div>
-                  <div>
-                    <p className="text-2xl font-bold text-gray-900">1.47k</p>
-                    <span className="text-xs text-emerald-500 font-medium">+0.18₹</span>
-                  </div>
+                </div>
+                <div className="absolute right-0 bottom-1">
+                  <div className="w-0 h-0 border-l-[4px] border-r-[4px] border-t-[6px] border-transparent border-t-emerald-500"></div>
                 </div>
               </div>
 
-              <div className="flex-1 mt-auto">
-                <div className="h-[80px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={reportingTrendsData}>
-                      <Tooltip content={<CustomMiniTooltip />} />
-                      <Bar dataKey="value" fill="#10b981" radius={[2, 2, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
+              <div className="flex-1 w-full min-h-[120px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={reportingTrendsData}>
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#9ca3af' }} dy={10} />
+                    <Tooltip content={<CustomMiniTooltip />} cursor={{ fill: '#f3f4f6' }} />
+                    <Bar dataKey="value" fill="#d1d5db" radius={[2, 2, 2, 2]} barSize={4} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Center Column (Span 6) - Map area */}
+        {/* Center Column (Span 6) - 3D Wireframe / Map area */}
         <Card className="lg:col-span-6 rounded-[20px] border-none shadow-sm bg-white overflow-hidden relative min-h-[460px]">
           {/* Subtle Grid Background */}
           <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
           <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent z-10"></div>
 
-          {/* Map Overlay Graphic */}
+          {/* Map Overlay Graphic (Abstract Representation) */}
           <div className="absolute inset-0 flex items-center justify-center opacity-80 pointer-events-none z-0">
             <div className="w-4/5 h-4/5 border border-emerald-100/50 rounded-3xl relative" style={{ perspective: '1000px', transformStyle: 'preserve-3d', transform: 'rotateX(50deg) rotateZ(-20deg) scale(1.1)' }}>
+              {/* Grid planes to simulate 3D */}
               <div className="absolute inset-0 border border-emerald-200 shadow-[0_0_30px_rgba(16,185,129,0.1)] rounded-3xl overflow-hidden" style={{ backgroundImage: 'linear-gradient(rgba(16, 185, 129, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(16, 185, 129, 0.1) 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
               <div className="absolute inset-4 border border-emerald-300/40 rounded-2xl bg-white/20 backdrop-blur-sm" style={{ transform: 'translateZ(40px)' }}></div>
               <div className="absolute inset-12 border border-emerald-400/50 rounded-xl bg-emerald-50/30 backdrop-blur-md" style={{ transform: 'translateZ(80px)' }}></div>
 
-              {/* 3D Pillars */}
+              {/* 3D Pillars/Data points */}
               <div className="absolute top-[20%] left-[30%] w-6 h-24 bg-gradient-to-t from-emerald-500/20 to-emerald-400/80 border-t border-l border-emerald-300 shadow-xl" style={{ transform: 'translateZ(48px)', transformOrigin: 'bottom' }}></div>
               <div className="absolute top-[50%] left-[60%] w-8 h-32 bg-gradient-to-t from-emerald-600/20 to-emerald-500/90 border-t border-l border-emerald-200" style={{ transform: 'translateZ(64px)', transformOrigin: 'bottom' }}></div>
               <div className="absolute top-[70%] left-[40%] w-5 h-16 bg-gradient-to-t from-amber-500/20 to-amber-400/80 border-t border-l border-amber-300" style={{ transform: 'translateZ(32px)', transformOrigin: 'bottom' }}></div>
@@ -410,7 +386,7 @@ const UserDashboard = () => {
 
         {/* Right Column (Span 3) */}
         <div className="lg:col-span-3 flex flex-col gap-6">
-          {/* Card 4: AI Assistant */}
+          {/* Card 4: AI Assistant (Themed Green) */}
           <Card className="rounded-[20px] border-none shadow-[0_10px_30px_-10px_rgba(16,185,129,0.3)] bg-gradient-to-br from-[#064e3b] via-[#0f766e] to-[#042f2e] text-white flex-1 relative overflow-hidden">
             <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at top right, #34d399, transparent 60%)' }}></div>
             <CardContent className="p-6 relative z-10 flex flex-col h-full justify-between">
